@@ -1,0 +1,8 @@
+[
+  {
+    "name": "Exemplo de nome para carta",
+    "attack": 1,
+    "defense": 1,
+    "sprite": "sprites/cards/sprite1.png"
+  }
+]
