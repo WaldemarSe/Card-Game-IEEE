@@ -3,11 +3,11 @@
 > Projeto de Jogo de cartas do curso de Ciência da Computação no ano 2026. 
 A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criatividade dos membros na definição das regras, mecânicas e do visual do jogo.
 
-* **SUPERVISORES**:
+**SUPERVISORES**:
 - Marco 
 - Nicolas de Oliveira
 
-* **MEMBROS**:
+**MEMBROS**:
 - Aluísio de Oliveira Barbosa
 - André Felipe Ijiri Ribeiro
 - Bruna Yokoshiro
