@@ -15,7 +15,6 @@ A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criativi
 - Eduardo Fernandes Lanza
 - João Santos
 - Waldemar Serafim Neto
-# ======================================= #
 
 ---
 
