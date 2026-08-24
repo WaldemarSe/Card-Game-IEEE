@@ -15,7 +15,6 @@ A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criativi
 - Eduardo Fernandes Lanza
 - João Santos
 - Waldemar Serafim Neto
-# ======================================= #
 
 ---
 
@@ -79,9 +78,24 @@ Ao realizar um commit, seguir a estrutura a seguir:
 
 ## Compilação
 
+### Pré-requisitos
+1. Ter o [MinGW](https://sourceforge.net/projects/mingw/) instalado e configurado para o PATH do sistema.
+2. Ter o [Raylib](https://www.raylib.com/) instalado apropriadamente.
+
+### Compilando o programa
+1. Executar o terminal presente no diretório raiz do repositório: ```Raylib(CMD)```.
+2. Navegar até o diretório atual através do comando ```cd```, por exemplo: ```cd "C:\Users\Admin\Documents\Github\Card-Game-IEEE"```.
+3. Executar o comando ```make```.
+
+Se os passos foram seguidos corretamente, um executável ```cardGame.exe``` será incluído na raiz do arquivo.
+
 ---
 
 ## Clean
+
+Seguindo os passos presentes na seção de compilação...
+
+Basta executar o comando ```make clean``` para remover todos os arquivos-objeto criados a partir de um comando ```make```.
 
 ---
 
