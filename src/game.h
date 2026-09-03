@@ -27,6 +27,7 @@
 
 typedef void* Carta;
 
+/* =============================================== FUNÇÕES PRINCIPAIS ================================================ */
 /** criarCampo
  * @brief Cria o campo de jogo, inicializando os elementos e estruturas essenciais para a partida.
  * @return Retorna um ponteiro VOID para o campo criado.
@@ -72,5 +73,9 @@ int atacarCarta(Carta* atacante, Carta* alvo);
  * @return Não há retorno, mas a função deve garantir que todos os recursos associados ao campo sejam liberados.
  */
 void liberarCampo(void* campo);
+/* =================================================================================================================== */
+
+/* =============================================== FUNÇÕES SECUNDÁRIAS =============================================== */
+/* =================================================================================================================== */
 
 #endif
