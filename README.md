@@ -4,17 +4,17 @@
 A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criatividade dos membros na definição das regras, mecânicas e do visual do jogo.
 
 **SUPERVISORES**:
-Marco 
-Nicolas de Oliveira
+- Marco
+- Nicolas de Oliveira
 
 **MEMBROS**:
-Aluísio de Oliveira Barbosa
-André Felipe Ijiri Ribeiro
-Bruna Yokoshiro
-Caio Sweiver de Carvalho
-Eduardo Fernandes Lanza
-João Santos
-Waldemar Serafim Neto
+- Aluísio de Oliveira Barbosa
+- André Felipe Ijiri Ribeiro
+- Bruna Yokoshiro
+- Caio Sweiver de Carvalho
+- Eduardo Fernandes Lanza
+- João Santos
+- Waldemar Serafim Neto
 
 ---
 
@@ -102,8 +102,23 @@ Basta executar o comando `make clean` para remover todos os arquivos-objeto cria
 
 ## Valgrind
 
-Seguindo os passos presentes na seção de compilação...
+### Pré-requisitos
+1. Ter o [Valgrind](https://valgrind.org) instalado apropriadamente - [Última versão](https://valgrind.org/downloads/current.html#current).
+2. Ter alguma distribuição de Linux instalada, como `Ubuntu`.
+2. Ou ter alguma máquina de Linux para o Windows, como o `WSL`.
 
-Executar: `"valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./ted -e ../entradas/ -f t1.geo -v t3.via -q consultas/t2.qry -o ../saidas/"`
+### Testando o programa
+> Caso sua máquina seja Linux
+1. Não sei como funciona;
+2. Alguém que use Linux preencha estes passos, por favor;
+
+> Caso sua máquina seja Windows
+1. Abrir o terminal de sua escolha, como: `Promp de Comando`; `Terminal`; `Windows PowerShell` etc.;
+2. Executar o subsistema de Linux para Windows, como **WSL** digitando `wsl`;
+3. Navegar até o diretório que possui o Makefile com `cd`;
+4. Compilar o projeto com `make`;
+5. Executar o seguinte comando `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./ted -e ../entradas/ -f t1.geo -v t3.via -q consultas/t2.qry -o ../saidas/` de acordo com a versão de uso atual **valgrind-3.27.1**;
+
+Se os passos foram seguidos corretamente, um relatório de compilação e execução deve ser exibido no terminal da IDE destacando **erros**, **memory leaks** e mais.
 
 ---
