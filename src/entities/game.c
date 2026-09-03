@@ -41,7 +41,7 @@ void* criarCampo(){
             return NULL;
         }
 
-        for(int j = 0; j < COLS; j++) {campo[i][j] = 0;}
+        for(int j = 0; j < COLS; j++) {campo[i][j] = i * COLS + j;}
     }
 
     return (void*)campo;
@@ -125,4 +125,20 @@ void liberarCampo(void* campo){
 
 
 /* =============================================== FUNÇÕES SECUNDÁRIAS =============================================== */
+void printCampo(void* campo){
+    if(campo == NULL){
+        printf("[ERROR]\n");
+        printf("in game.c: printCampo()\n");
+        printf("Game field is NULL, cannot print\n");
+        return;
+    }
+
+    int** campoInt = (int**)campo;
+    for(int i = 0; i < ROWS; i++){
+        for(int j = 0; j < COLS; j++){
+            printf("[%3d] ", campoInt[i][j]);
+        }
+        printf("\n");
+    }
+}
 /* =================================================================================================================== */

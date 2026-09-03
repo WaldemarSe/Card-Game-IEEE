@@ -69,13 +69,17 @@ int atacarCarta(Carta* atacante, Carta* alvo);
  * @note Será utilizado a ferramenta de Valgrind para verificar se não há vazamentos de memória.
  * 
  * @param campo Ponteiro para o campo a ser liberado.
- * 
- * @return Não há retorno, mas a função deve garantir que todos os recursos associados ao campo sejam liberados.
  */
 void liberarCampo(void* campo);
 /* =================================================================================================================== */
 
 /* =============================================== FUNÇÕES SECUNDÁRIAS =============================================== */
+/** printCampo
+ * @brief Imprime o estado atual do campo de jogo, mostrando as cartas presentes e suas posições.
+ * 
+ * @param campo Ponteiro para o campo a ser impresso.
+ */
+void printCampo(void* campo);
 /* =================================================================================================================== */
 
 #endif
