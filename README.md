@@ -105,7 +105,7 @@ Basta executar o comando `make clean` para remover todos os arquivos-objeto cria
 ### Pré-requisitos
 1. Ter o [Valgrind](https://valgrind.org) instalado apropriadamente - [Última versão](https://valgrind.org/downloads/current.html#current).
 2. Ter alguma distribuição de Linux instalada, como `Ubuntu`.
-2. Ou ter alguma máquina de Linux para o Windows, como o `WSL`.
+3. Ou ter alguma máquina de Linux para o Windows, como o `WSL`.
 
 ### Testando o programa
 > Caso sua máquina seja Linux
