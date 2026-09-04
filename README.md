@@ -4,7 +4,7 @@
 A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criatividade dos membros na definição das regras, mecânicas e do visual do jogo.
 
 **SUPERVISORES**:
-- Marco 
+- Marco
 - Nicolas de Oliveira
 
 **MEMBROS**:
@@ -23,6 +23,7 @@ A ideia do projeto é criar um jogo eletrônico de cartas, explorando a criativi
 Fluxo de manutenção das branches:
 
 * **Main:** A branch `main` **não** deve receber nenhum merge direto das branches auxiliares. Deve ser realizado uma revisão do código para averiguar se a o objetivo foi devidamente concluído sem capotar o projeto principal;
+* **Pull Request:** O *pull request* deve ser realizado para a brach `Waldemar` para que verificações possam ser realizadas antes do *merge* com a `main`;
 * **Merge Administrativo:** O merge final para a branch `main` será realizado exclusivamente por uma única pessoa designada;
 
 ---
@@ -78,12 +79,46 @@ Ao realizar um commit, seguir a estrutura a seguir:
 
 ## Compilação
 
+### Pré-requisitos
+1. Ter o [MinGW](https://sourceforge.net/projects/mingw/) instalado e configurado para o PATH do sistema.
+2. Ter o [Raylib](https://www.raylib.com/) instalado apropriadamente.
+
+### Compilando o programa
+1. Executar o terminal presente no diretório raiz do repositório: `Raylib(CMD)`.
+2. Navegar até o diretório atual através do comando `cd`, por exemplo: `cd "C:\Users\Admin\Documents\Github\Card-Game-IEEE"`.
+3. Executar o comando `make`.
+
+Se os passos foram seguidos corretamente, um executável `cardGame.exe` será incluído na raiz do arquivo.
+
 ---
 
 ## Clean
 
+Seguindo os passos presentes na seção de compilação...
+
+Basta executar o comando `make clean` para remover todos os arquivos-objeto criados a partir de um comando `make`.
+
 ---
 
 ## Valgrind
+
+### Pré-requisitos
+1. Ter o [Valgrind](https://valgrind.org) instalado apropriadamente - [Última versão](https://valgrind.org/downloads/current.html#current).
+2. Ter alguma distribuição de Linux instalada, como `Ubuntu`.
+3. Ou ter alguma máquina de Linux para o Windows, como o `WSL`.
+
+### Testando o programa
+> Caso sua máquina seja Linux
+1. Não sei como funciona;
+2. Alguém que use Linux preencha estes passos, por favor;
+
+> Caso sua máquina seja Windows
+1. Abrir o terminal de sua escolha, como: `Promp de Comando`; `Terminal`; `Windows PowerShell` etc.;
+2. Executar o subsistema de Linux para Windows, como **WSL** digitando `wsl`;
+3. Navegar até o diretório que possui o Makefile com `cd`;
+4. Compilar o projeto com `make`;
+5. Executar o seguinte comando `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./ted -e ../entradas/ -f t1.geo -v t3.via -q consultas/t2.qry -o ../saidas/` de acordo com a versão de uso atual **valgrind-3.27.1**;
+
+Se os passos foram seguidos corretamente, um relatório de compilação e execução deve ser exibido no terminal da IDE destacando **erros**, **memory leaks** e mais.
 
 ---
