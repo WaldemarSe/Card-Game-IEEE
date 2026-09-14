@@ -7,6 +7,8 @@
 
 typedef void* Carta; // Ponteiro para o Card
 
+Carta* criarCarta(int id,char* nome, int atk, int vida);
+
 int getAtk(Carta c);
 
 void setAtk(Carta c, int atk);
@@ -14,6 +16,16 @@ void setAtk(Carta c, int atk);
 int getVida(Carta c);
 
 void setVida(Carta c, int vida);
+
+int getID(Carta c);
+
+int getPos(Carta c);
+
+void setPos(Carta c, int pos);
+
+bool getPlayerFlag(Carta c);
+
+void setPlayerFlag(Carta c, bool playerFlag);
 
 void killCarta(Carta c);
 
