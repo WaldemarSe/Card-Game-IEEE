@@ -6,11 +6,19 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include <imageObject.h>
+#include <textObject.h>
+#include <button.h>
+
 #include <delimiters.h>
 #include <utils.h>
 
 #include "carta.h"
 #include "game.h"
+
+float mySinf(float t){
+    return sinf(t * 2.0f * PI) * 5.0f;
+}
 
 int main(){
     printf("\n\n\n");
@@ -23,12 +31,39 @@ int main(){
     // Pega o caminho da aplicação (para usar nos paths futuros)
     _chdir(GetApplicationDirectory());
     
+    // Imagem de placeholder
+    ImageObject mainMenuBackground = Image_Init("./assets/sprites/menuBackground_p.png");
+    Image_FitToScreenSize(mainMenuBackground);
+    Image_SetColor(mainMenuBackground, (Color){255, 255, 255, 100});
+
+    // Texto de placeholder
+    TextObject mainMenuHeaderText = Text_Init("CompCardGame");
+    Text_AddAnimation(mainMenuHeaderText, cosf, 0.0f, mySinf, 0.1f);
+    Text_SetFontSize(mainMenuHeaderText, 40);
+    Text_SetPosition(mainMenuHeaderText, CENTER);
+    Text_SetSpacing(mainMenuHeaderText, 1.8f);
+
+    // Botão de placeholder
+    Button mainMenuStartButton = Button_Init("Start", 40, Vector2AddValue(CENTER, 40), WHITE, WHITE, RED, BLACK);
+
     // Tela
     while(!WindowShouldClose()){
+        float deltaTime = GetFrameTime();
+
         BeginDrawing();
-        ClearBackground(BLACK);
+            ClearBackground(BLACK);
+            Image_Draw(mainMenuBackground);
+
+            Text_DrawAnimated(mainMenuHeaderText, deltaTime);
+            Button_Draw(mainMenuStartButton);
         EndDrawing();
     }
+
+    // Free's
+    Image_FreeAll();
+    Text_FreeAll();
+    Button_Free(mainMenuStartButton);
+
     printf("\n");
     printf("|| =========================== Ending Raylib =========================== ||\n");
 

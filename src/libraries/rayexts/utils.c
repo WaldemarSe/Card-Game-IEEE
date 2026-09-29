@@ -166,6 +166,13 @@ float easeInOutCirc(float t){
     return t < 0.5 ? (1 - sqrtf(1 - powf(2 * t, 2))) / 2 : (sqrtf(1 - powf(-2 * t + 2, 2)) + 1) / 2;
 }
 
+float easeInOutBack(float t){
+    const float c1 = 1.70158;
+    const float c2 = c1 * 1.525;
+
+    return t < 0.5 ? (powf(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2 : (powf(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+}
+
 float easeOutBounce(float t) {
     const float n1 = 7.5625f;
     const float d1 = 2.75f;
@@ -193,6 +200,14 @@ float easeOutBack(float t){
 
 float bellFunction(float t){
     return exp(-1 * (powf(t - 0.5f, 2) / 0.03f));
+}
+
+float sineFunction(float t){
+    return sinf(t * 2 * PI);
+}
+
+float cosineFuntion(float t){
+    return cosf(t * 2 * PI);
 }
 
 void createAndInsertInstance(Hash* hash, int id, Item item){

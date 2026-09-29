@@ -190,6 +190,20 @@ void Animation_SetPosition(Animation animation, Vector2 position);
 Vector2 Animation_GetPosition(Animation animation);
 
 /**
+ * @brief Obtem o atributo de progresso em relacao a animacao de posicao.
+ * @param animation O objeto de animacao escolhido.
+ * @return Retorna o progresso da animacao atual.
+ */
+float Animation_GetPositionProgress(Animation animation);
+
+/**
+ * @brief Obtem a funcao de interpolacao associada a animacao de posicao.
+ * @param animation O objeto de animacao escolhido.
+ * @return Retorna a funcao de interpolacao.
+ */
+interpolationFunction Animation_GetPositionFunction(Animation animation);
+
+/**
  * @brief Define manualmente o retangulo de escala da animacao.
  * @param animation O objeto de animacao a ser modificado.
  * @param rectangle Estrutura com as novas dimensoes.
