@@ -398,6 +398,24 @@ Vector2 Animation_GetPosition(Animation animation){
     return (animPos == NULL ? (Vector2){0, 0} : animPos->current);
 }
 
+float Animation_GetPositionProgress(Animation animation){
+    AnimationStr* anim = (AnimationStr*)animation;
+    PositionAnimation* animPos = anim->position;
+
+    if(animPos == NULL || animPos->resources.animating == false) return 0.0f;
+
+    return animPos->resources.elapsed / animPos->resources.duration;
+}
+
+interpolationFunction Animation_GetPositionFunction(Animation animation){
+    AnimationStr* anim = (AnimationStr*)animation;
+    PositionAnimation* animPos = anim->position;
+
+    if(animPos == NULL) return NULL;
+
+    return animPos->interFunc;
+}
+
 void Animation_SetRectangle(Animation animation, Rectangle rectangle){
     AnimationStr* anim = (AnimationStr*)animation;
     ScaleAnimation* animScale = anim->scale;

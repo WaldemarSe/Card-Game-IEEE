@@ -202,6 +202,14 @@ float bellFunction(float t){
     return exp(-1 * (powf(t - 0.5f, 2) / 0.03f));
 }
 
+float sineFunction(float t){
+    return sinf(t * 2 * PI);
+}
+
+float cosineFuntion(float t){
+    return cosf(t * 2 * PI);
+}
+
 void createAndInsertInstance(Hash* hash, int id, Item item){
     if(*hash == NULL) *hash = criaHash(23, false, 0.75f);
     inserirHash(*hash, TextFormat("%d", id), item);

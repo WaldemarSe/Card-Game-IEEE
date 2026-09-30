@@ -23,6 +23,8 @@ __declspec(dllimport) HCURSOR __stdcall SetCursor(HCURSOR hCursor);
 
 #define TO_STRING(variable) #variable
 
+#define EULER 2.71828
+
 /**
  * @brief Aguarda por um determinado período e sinaliza a passagem do intervalo.
  * @param intervalo O tempo em segundos a ser esperado.
@@ -128,6 +130,10 @@ float easeOutBounce(float t);
 float easeOutBack(float t);
 
 float bellFunction(float t);
+
+float sineFunction(float t);
+
+float cosineFuntion(float t);
 
 ///////////////////////////////////////////
 
