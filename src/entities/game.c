@@ -12,11 +12,11 @@
  * @param tamanho    Tamanho atual do campo.
  * @param capacidade Capacidade máxima do campo.
  */
-typedef struct Campo{
+typedef struct campo{
     Carta* cartas;
     int tamanho;
     int capacidade;
-} Campo;
+}Campo;
 /* =================================================================================================================== */
 
 
@@ -53,8 +53,8 @@ Carta** criarCampo(){
     return (Carta**)campo;
 }
 
-bool adicionarCarta(Carta** campo, Carta* carta, bool playerFlag, int pos){
-    // 1: Verifica se a carta, o campo e a posição são válidos antes de adicionar a carta ao campo de jogo
+bool adicionarCarta(Carta** campo, Carta* carta, int pos){
+    // 1: Verifica se a carta e o campo são válidos antes de adicionar a carta ao campo de jogo
     if(carta == NULL){
         printf("[ERROR]: adicionarCarta() [game.c]\n");
         printf("Card is NULL, cannot add to field\n");
@@ -65,35 +65,38 @@ bool adicionarCarta(Carta** campo, Carta* carta, bool playerFlag, int pos){
         printf("Field is NULL, cannot add to field\n");
         return false;
     }
-    if(pos < 0 || pos > ROWS){
+    if(pos < 0 || pos > COLS-1){
         printf("[ERROR]: adicionarCarta() [game.c]\n");
-        printf("Position %d is out of bounds for the field of rows: [0 - %d]\n", pos, ROWS);
+        printf("Position %d is out of bounds for the field of columns: [0 : %d]\n\n", pos, COLS);
         return false;
     }
 
-    // 2: Define a posição e a flag do jogador para a carta antes de adicioná-la ao campo de jogo
-    setPos(carta, pos);
-    setPlayerFlag(carta, playerFlag);
-
     // 3: Adiciona a carta ao campo de jogo na posição especificada, dependendo da flag do jogador (playerFlag)
+    int coords[2];
     // flag = true:  Carta do jogador (Linha inferior do campo = ROWS-1)
-    if(playerFlag){
+    if(getPlayerFlag(carta)){
         campo[ROWS-1][pos] = carta;
+        coords[0] = ROWS-1;
+        coords[1] = pos;
+        setPos(carta, coords);
         // printf("[INFO]: adicionarCarta() [game.c]\n");
-        // printf("Card added to player's field at position %d\n\n", pos);
+        // printf("Card [%d] added to field at position [%d][%d]\n\n", getID(carta), coords[0], coords[1]);
         return true;
     }
     // flag = false: Carta do oponente (Linha superior do campo = 0)
     else{
         campo[0][pos] = carta;
+        coords[0] = 0;
+        coords[1] = pos;
+        setPos(carta, coords);
         // printf("[INFO]: adicionarCarta() [game.c]\n");
-        // printf("Card added to opponent's field at position %d\n\n", pos);
+        // printf("Card [%d] added to field at position [%d][%d]\n\n", getID(carta), coords[0], coords[1]);
         return true;
     }
 }
 
-bool removerCarta(Carta** campo, Carta* carta, bool playerFlag, int pos){
-    // 1: Verifica se a carta, o campo e a posição são válidos antes de remover a carta do campo de jogo
+bool removerCarta(Carta** campo, Carta* carta){
+    // 1: Verifica se a carta e o campo são válidos antes de remover a carta do campo de jogo
     if(carta == NULL){
         printf("[ERROR]: removerCarta() [game.c]\n");
         printf("Card is NULL, cannot remove from field\n");
@@ -104,66 +107,63 @@ bool removerCarta(Carta** campo, Carta* carta, bool playerFlag, int pos){
         printf("Field is NULL, cannot remove from field\n");
         return false;
     }
-    if(pos < 0 || pos > ROWS){
-        printf("[ERROR]: removerCarta() [game.c]\n");
-        printf("Position %d is out of bounds for the field of rows: [0 - %d]\n", pos, ROWS);
-        return false;
-    }
 
-    // 2: Remove a carta do campo de jogo na posição especificada, dependendo da flag do jogador (playerFlag)
-    // flag = true:  Carta do jogador (Linha inferior do campo = ROWS-1)
-    if(playerFlag){
-        killCarta(campo[ROWS-1][pos]);  // Libera a memória da carta antes de removê-la do campo
-        campo[ROWS-1][pos] = NULL;      // Define a posição como NULL para indicar que não há carta nessa posição
-        // printf("[INFO]: removerCarta() [game.c]\n");
-        // printf("Card removed from player's field at position: [%d][%d]\n\n", ROWS-1, pos);
-        return true;
-    }
-    // flag = false: Carta do oponente (Linha superior do campo = 0)
-    else{
-        killCarta(campo[0][pos]);   // Libera a memória da carta antes de removê-la do campo
-        campo[0][pos] = NULL;       // Define a posição como NULL para indicar que não há carta nessa posição
-        // printf("[INFO]: removerCarta() [game.c]\n");
-        // printf("Card removed from opponent's field at position: [%d][%d]\n\n", 0, pos);
-        return true;
-    }
+    // 2: Remove a carta do campo
+    int x = getPosX(carta);
+    int y = getPosY(carta);
+    killCarta(campo[x][y]);
+    campo[x][y] = NULL;
+    return true;
 }
 
-int atacarCarta(Carta** campo, Carta* atacante, Carta* alvo){
+int atacarCartas(Carta** campo, bool ataqueFlag, Jogador* jogador){
     // 1: Verifica se a carta atacante e a carta alvo são válidas antes de realizar o ataque
     if(campo == NULL){
         printf("[ERROR]: atacarCarta() [game.c]\n");
         printf("Game field is NULL, cannot perform attack\n");
         return -1;
     }
-    if(atacante == NULL){
+    if(jogador == NULL){
         printf("[ERROR]: atacarCarta() [game.c]\n");
-        printf("Attacker card is NULL, cannot perform attack\n");
+        printf("Player is NULL, cannot perform attack\n");
         return -1;
     }
-    if(alvo == NULL){
-        printf("[ERROR]: atacarCarta() [game.c]\n");
-        printf("Target card is NULL, cannot perform attack\n");
-        return -1;
-    }
-
-    printf("[INFO]: atacarCarta() [game.c]\n");
-    printf("Card %d attacked Card %d\n", getID(atacante), getID(alvo));
-    printf("Attack: [%d], Life: [%d]\n", getAtk(atacante), getVida(alvo));
 
     // 2: Realiza o ataque da carta atacante contra a carta alvo, aplicando as regras do jogo
-    // 2.1: Se o ataque da carta atacante for maior ou igual à vida da carta alvo, a carta alvo é removida do campo de jogo
-    if(getAtk(atacante) >= getVida(alvo)){
-        printf("Card [%d] killed by attack\n\n", getID(alvo));
-        removerCarta(campo, alvo, getPlayerFlag(alvo), getPos(alvo));
-        alvo = NULL;
-        return getAtk(atacante);
+    switch(ataqueFlag){
+        case true:
+            playerAtaque(campo);
+            break;
+        case false:
+            oponenteAtaque(campo, jogador);
+            break;
     }
-    // 2.2: Caso contrário, a vida da carta alvo é reduzida pelo valor do ataque da carta atacante
-    else{
-        setVida(alvo, getVida(alvo) - getAtk(atacante));
-        printf("Card [%d] damaged by attack, remaining life: %d\n\n", getID(alvo), getVida(alvo));
-        return getAtk(atacante);
+
+    return 0;
+}
+
+void moverCartas(Carta **campo){
+    // 1: Verifica se o campo é válido antes de mover as cartas para frente
+    if(campo == NULL){
+        printf("[ERROR]: moverCartas() [game.c]\n");
+        printf("Field is NULL, cannot move cards\n");
+        return;
+    }
+
+    // 2: Move as cartas para frente no campo de jogo
+    int pos[2];
+    for(int i = 0; i < COLS; i++){
+        // 2.1: Verifica se há uma carta na posição atual antes de tentar movê-la para frente
+        if(campo[0][i] != NULL){
+            // 2.1: Verifica se a posição à frente está livre antes de mover a carta para frente
+            if(campo[1][i] == NULL){
+                campo[1][i] = campo[0][i];
+                campo[0][i]   = NULL;
+                pos[0] = 1;
+                pos[1] = i;
+                setPos(campo[1][i], pos);
+            }
+        }
     }
 }
 
@@ -175,21 +175,23 @@ void liberarCampo(Carta** campo){
         return;
     }
 
-    // 2: Libera a memória alocada para cada carta no campo de jogo, chamando a função killCarta() para cada carta
+    // 2: Libera a memória alocada para cada carta no campo de jogo, 
+    // garantindo que todos os recursos sejam corretamente desalocados
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
             if(campo[i][j] != NULL){
-                // printf("[INFO]: liberarCampo() [game.c]\n");
-                // printf("Freeing card memory at position [%d][%d]\n\n", i, j);
                 killCarta(campo[i][j]);
                 campo[i][j] = NULL;
                 printCampo(campo);
             }
-        }free(campo[i]);
-    }free(campo);
+        }
+    }
 
-    // printf("[INFO]: liberarCampo() [game.c]\n");
-    // printf("Game field memory freed successfully\n\n");
+    // 3: Libera a memória alocada para cada linha do campo de jogo e,
+    // em seguida, libera a memória alocada para o próprio campo
+    for(int i = 0; i < ROWS; i++){
+        free(campo[i]);
+    }free(campo);
 }
 /* =================================================================================================================== */
 
@@ -205,11 +207,119 @@ void printCampo(Carta** campo){
     }
 
     // 2: Imprime o estado atual do campo de jogo, mostrando as cartas presentes e suas posições
+    printf("     CAMPO DE JOGO\n");
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
-            printf("[%3d] ", getID(campo[i][j]));
+            campo[i][j] == NULL ? printf("[   ]") : printf("[ %d ]", getID(campo[i][j]));
         }
         printf("\n");
     }printf("\n");
+}
+
+int playerAtaque(Carta** campo){
+    // 1: Verifica se o campo de jogo é válido antes de realizar o ataque
+    if(campo == NULL){
+        printf("[ERROR]: playerAtaque() [game.c]\n");
+        printf("Game field is NULL, cannot perform attack\n");
+        return -1;
+    }
+
+    // 2: Cria ponteiros para a carta atacante e a carta alvo, inicializando-os como NULL
+    Carta* atacante = NULL;
+    Carta* alvo     = NULL;
+
+    // 3: Percorre o campo de jogo, realizando o ataque da carta contra o alvo
+    for(int i = 0; i < COLS; i++){
+        // Verifica se há uma carta na última linha do campo (linha do jogador) para realizar o ataque
+        if(campo[ROWS-1][i] != NULL){
+            atacante = campo[ROWS-1][i];
+
+            // Verifica se há uma carta a frente (linha do oponente) para realizar o ataque
+            if(campo[ROWS-2][i] != NULL){
+                alvo = campo[ROWS-2][i];
+
+                printf("[INFO]: playerAtaque() [game.c]\n");
+                printf("Card [%d] is attacking Card [%d]\n", getID(atacante), getID(alvo));
+                printf("CARD [%d] ATK: %d\n", getID(atacante), getAtk(atacante));
+                printf("CARD [%d] HP:  %d\n", getID(alvo), getVida(alvo));
+
+                // Verifica se o ataque resultará na morte do alvo ou se ela sobreviverá ao ataque
+                // CARTA MORRE
+                if(getAtk(atacante) >= getVida(alvo)){
+                    printf("Card [%d] killed!\n\n", getID(alvo));
+                    removerCarta(campo, alvo);
+                    alvo = NULL;
+                }
+                // CARTA SOBREVIVE
+                else{
+                    setVida(alvo, getVida(alvo) - getAtk(atacante));
+                    printf("Card [%d] injured!\n", getID(alvo));
+                    printf("Remaining life: %d\n\n", getVida(alvo));
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+int oponenteAtaque(Carta** campo, Jogador* jogador){
+    // 1: Verifica se o campo de jogo e o jogador são válidos antes de realizar o ataque
+    if(campo == NULL){
+        printf("[ERROR]: playerAtaque() [game.c]\n");
+        printf("Game field is NULL, cannot perform attack\n");
+        return -1;
+    }
+    if(jogador == NULL){
+        printf("[ERROR]: playerAtaque() [game.c]\n");
+        printf("Player is NULL, cannot perform attack\n");
+        return -1;
+    }
+
+    // 2: Cria ponteiros para a carta atacante e a carta alvo, inicializando-os como NULL
+    Carta* atacante = NULL;
+    Carta* alvo     = NULL;
+
+    // 3: Percorre o campo de jogo, realizando o ataque da carta contra o alvo
+    for(int i = 0; i < COLS; i++){
+        // Verifica se há uma carta na linha do meio do campo para realizar o ataque
+        if(campo[ROWS-2][i] != NULL){
+            atacante = campo[ROWS-2][i];
+
+            // Verifica se há uma carta a frente (linha do jogador) para realizar o ataque
+            if(campo[ROWS-1][i] != NULL){
+                alvo = campo[ROWS-1][i];
+
+                printf("[INFO]: oponenteAtaque() [game.c]\n");
+                printf("Card [%d] is attacking Card [%d]\n", getID(atacante), getID(alvo));
+                printf("CARD [%d] ATK: %d\n", getID(atacante), getAtk(atacante));
+                printf("CARD [%d] HP:  %d\n", getID(alvo), getVida(alvo));
+
+                // Verifica se o ataque resultará na morte do alvo ou se ela sobreviverá ao ataque
+                // CARTA MORRE
+                if(getAtk(atacante) >= getVida(alvo)){
+                    printf("Card [%d] killed!\n\n", getID(alvo));
+                    removerCarta(campo, alvo);
+                    alvo = NULL;
+                }
+                // CARTA SOBREVIVE
+                else{
+                    setVida(alvo, getVida(alvo) - getAtk(atacante));
+                    printf("Card [%d] injured!\n", getID(alvo));
+                    printf("Remaining life: %d\n\n", getVida(alvo));
+                }
+            }
+
+            // Se não houver carta a frente, o ataque é direcionado ao jogador, reduzindo sua vida
+            else{
+                printf("[INFO]: oponenteAtaque() [game.c]\n");
+                printf("Player's life [%d] reduced by [%d]\n", getVidaJogador(jogador), getAtk(atacante));
+                setVidaJogador(jogador, getVidaJogador(jogador) - getAtk(atacante));
+                printf("Player's remaining life: [%d]\n\n", getVidaJogador(jogador));
+            }
+        }
+    }
+    
+    return 0;
 }
 /* =================================================================================================================== */
