@@ -117,7 +117,7 @@ Basta executar o comando `make clean` para remover todos os arquivos-objeto cria
 2. Executar o subsistema de Linux para Windows, como **WSL** digitando `wsl`;
 3. Navegar até o diretório que possui o Makefile com `cd`;
 4. Compilar o projeto com `make`;
-5. Executar o seguinte comando `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./ted -e ../entradas/ -f t1.geo -v t3.via -q consultas/t2.qry -o ../saidas/` de acordo com a versão de uso atual **valgrind-3.27.1**;
+5. Executar o seguinte comando `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./cardGame.exe` de acordo com a versão de uso atual **valgrind-3.27.1**;
 
 Se os passos foram seguidos corretamente, um relatório de compilação e execução deve ser exibido no terminal da IDE destacando **erros**, **memory leaks** e mais.
 
