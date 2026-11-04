@@ -1,11 +1,11 @@
-#ifndef _GAME_H_
-#define _GAME_H_
+#ifndef _CAMPO_H_
+#define _CAMPO_H_
 
-/** GAME: Campo/Jogo
- * @file game.h
+/** CAMPO: Campo/Jogo
+ * @file campo.h
  * @authors André Felipe Ijiri Ribeiro(andre.ijiri.ribeiro@gmail.com) e Bruna Yokoshiro()
  * @brief Classe que representa o jogo ou o campo de jogo.
- * @date 2023-04-01
+ * @date 2026-09-01
  * 
  * Para fins de simplificação, a classe Jogo (ou Campo) será responsável por rodar toda a interface 
  * bem como os dados essenciais para a partida (jogadores, cartas, o campo propriamente dito, etc.). 

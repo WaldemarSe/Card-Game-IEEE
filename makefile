@@ -1,7 +1,7 @@
 CC = gcc
 
 SRC_DIR = src
-LIB_DIR = src/libraries src/entities
+LIB_DIR = src/libraries src/entities src/windowManagement src/windows
 OBJ_DIR = src/obj
 
 SRCS = $(shell find $(SRC_DIR) -name "*.c")

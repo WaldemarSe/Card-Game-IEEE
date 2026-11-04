@@ -13,11 +13,20 @@
 #include <delimiters.h>
 #include <utils.h>
 
-#include "carta.h"
-#include "game.h"
+#include "screen.h"
 
-float mySinf(float t){
-    return sinf(t * 2.0f * PI) * 5.0f;
+#include "carta.h"
+#include "campo.h"
+
+extern Screen MenuScreen;
+Screen gScreens[] = {};
+
+static ScreenId current, next;
+static bool changeScreen = false;
+
+void ChangeScreen(ScreenId id){
+    next = id;
+    changeScreen = true;
 }
 
 int main(){
@@ -31,38 +40,37 @@ int main(){
     // Pega o caminho da aplicação (para usar nos paths futuros)
     _chdir(GetApplicationDirectory());
     
-    // Imagem de placeholder
-    ImageObject mainMenuBackground = Image_Init("./assets/sprites/menuBackground_p.png");
-    Image_FitToScreenSize(mainMenuBackground);
-    Image_SetColor(mainMenuBackground, (Color){255, 255, 255, 100});
+    Game game = Game_Load(); // (recursos, so' a fonte por enquanto)
 
-    // Texto de placeholder
-    TextObject mainMenuHeaderText = Text_Init("CompCardGame");
-    Text_AddAnimation(mainMenuHeaderText, cosf, 0.0f, mySinf, 0.1f);
-    Text_SetFontSize(mainMenuHeaderText, 40);
-    Text_SetPosition(mainMenuHeaderText, CENTER);
-    Text_SetSpacing(mainMenuHeaderText, 1.8f);
+    gScreens[0] = MenuScreen;
+    // gScreens[1] == ... (caso tenham mais telas)
 
-    // Botão de placeholder
-    Button mainMenuStartButton = Button_Init("Start", 40, Vector2AddValue(CENTER, 40), WHITE, WHITE, RED, BLACK);
+    current = MENUSCREEN;
+    gScreens[current].Init(game);
 
     // Tela
     while(!WindowShouldClose()){
         float deltaTime = GetFrameTime();
+        gScreens[current].Update(game, deltaTime);
+
+        // Transição de tela
+        if(changeScreen){
+            gScreens[current].Unload(game);
+            current = next;
+            gScreens[current].Init(game);
+            changeScreen = false;
+        }
 
         BeginDrawing();
             ClearBackground(BLACK);
-            Image_Draw(mainMenuBackground);
-
-            Text_DrawAnimated(mainMenuHeaderText, deltaTime);
-            Button_Draw(mainMenuStartButton);
+            gScreens[current].Draw(game, deltaTime);
         EndDrawing();
     }
 
-    // Free's
-    Image_FreeAll();
-    Text_FreeAll();
-    Button_Free(mainMenuStartButton);
+    gScreens[current].Unload(game);
+    Game_Unload(game);
+
+    CloseWindow();
 
     printf("\n");
     printf("|| =========================== Ending Raylib =========================== ||\n");
