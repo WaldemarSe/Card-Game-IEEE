@@ -1,0 +1,23 @@
+[
+  {
+    "id": 0,
+    "name": "Coruja-Libra",
+    "attack": 2,
+    "health": 1,
+    "sprite": "sprites/cards/sprite1.png"
+  },
+  {
+    "id": 1,
+    "name": "Virgem-Cobra",
+    "attack": 4,
+    "health": 1,
+    "sprite": "sprites/cards/sprite2.png"
+  },
+  {
+    "id": 2,
+    "name": "Peixes",
+    "attack": 2,
+    "health": 4,
+    "sprite": "sprites/cards/sprite3.png"
+  }
+]

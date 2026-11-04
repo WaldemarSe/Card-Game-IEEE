@@ -42,7 +42,7 @@ int main(){
         printf("Failed to create game field\n");
         return -1;
     }
-    Jogador* jogador = criarJogador(10);
+    Jogador jogador = criarJogador(10);
     if(jogador == NULL){
         printf("[ERROR]: main.c: main()\n");
         printf("Failed to create player\n");
@@ -50,35 +50,35 @@ int main(){
     }
 
     // 2: Cria algumas cartas para testar as funções do jogo
-    Carta* carta1 = criarCarta(1, "Carta 1", 1, 1, true);
+    Carta carta1 = criarCarta(1, "Carta 1", 1, 1, "", true);
     if(carta1 == NULL){
         printf("[ERROR]\n");
         printf("in main.c: main()\n");
         printf("Failed to create card 1\n");
         return -1;
     }
-    Carta* carta2 = criarCarta(2, "Carta 2", 5, 5, true);
+    Carta carta2 = criarCarta(2, "Carta 2", 5, 5, "", true);
     if(carta2 == NULL){
         printf("[ERROR]\n");
         printf("in main.c: main()\n");
         printf("Failed to create card 2\n");
         return -1;
     }
-    Carta* carta3 = criarCarta(3, "Carta 3", 1, 1, false);
+    Carta carta3 = criarCarta(3, "Carta 3", 1, 1, "", false);
     if(carta3 == NULL){
         printf("[ERROR]\n");
         printf("in main.c: main()\n");
         printf("Failed to create card 3\n");
         return -1;
     }
-    Carta* carta4 = criarCarta(4, "Carta 4", 10, 10, false);
+    Carta carta4 = criarCarta(4, "Carta 4", 10, 10, "", false);
     if(carta4 == NULL){
         printf("[ERROR]\n");
         printf("in main.c: main()\n");
         printf("Failed to create card 4\n");
         return -1;
     }
-    Carta* carta5 = criarCarta(5, "Carta 5", 15, 15, false);
+    Carta carta5 = criarCarta(5, "Carta 5", 15, 15, "", false);
     if(carta5 == NULL){
         printf("[ERROR]\n");
         printf("in main.c: main()\n");

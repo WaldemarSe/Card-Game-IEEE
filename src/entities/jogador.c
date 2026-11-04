@@ -1,34 +1,162 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct jogador{
+#include "jogador.h"
+#include "carta.h"
+#include "../libraries/data_structures/lista.h"
+#include "../libraries/json_functions/cJSON.h"
+
+#define MAX_CARTAS 3
+
+typedef struct {
     int vida;
-}Jogador;
+    Lista mao;
+    Lista baralho;
+}jogadorStr;
 
-Jogador* criarJogador(int vida){
-    Jogador* jogador = (Jogador*)malloc(sizeof(Jogador));
+Jogador criarJogador(int vida){
+    jogadorStr* jogador = (jogadorStr*)malloc(sizeof(jogadorStr));
+    
     if(jogador == NULL){
         printf("[ERROR]: criarJogador() [jogador.c]\n");
         printf("Failed to allocate memory for player\n");
         return NULL;
     }
+
     jogador->vida = vida;
+    jogador->mao = criaLista();
+    jogador->baralho = criaLista();
     return jogador;
 }
-void setVidaJogador(Jogador* jogador, int vida){
+
+void setVidaJogador(Jogador jogador, int vida){
+
     if(jogador == NULL){
         printf("[ERROR]: setVidaJogador() [jogador.c]\n");
         printf("Player is NULL, cannot set life\n");
         return;
     }
-    jogador->vida = vida;
+
+    jogadorStr* j = (jogadorStr*)jogador;
+    
+    j->vida = vida;
 }
 
-int getVidaJogador(Jogador* jogador){
+int getVidaJogador(Jogador jogador){
+    
     if(jogador == NULL){
         printf("[ERROR]: getVidaJogador() [jogador.c]\n");
         printf("Player is NULL, cannot get life\n");
         return -1;
     }
-    return jogador->vida;
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    return j->vida;
+}
+
+bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquivo){
+    
+    if(jogador == NULL){
+        printf("[ERROR]: carregarBaralho() [jogador.c]\n");
+        printf("Player is NULL, cannot load deck\n");
+        return false;
+    }
+    
+    jogadorStr* j = (jogadorStr*)jogador;
+    
+    // Leitura do arquivo JSON
+    FILE* file = fopen(caminhoArquivo, "rb");
+    if (!file) {
+        printf("[ERROR]: carregarBaralho() [jogador.c]\n");
+        printf("File not found\n");
+        return false;
+    }
+
+    // Descobre o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Aloca memória para o conteúdo + terminador nulo '\0'
+    char* buffer = (char*)malloc(length + 1);
+    if (buffer) {
+        fread(buffer, 1, length, file);
+        buffer[length] = '\0';
+    }
+
+    fclose(file);
+
+    cJSON* json = cJSON_Parse(buffer);
+    free(buffer);
+
+    if (!json || !cJSON_IsArray(json)) {
+        printf("[ERROR]: carregarBaralho() [jogador.c]\n");
+        printf("Failed to parse JSON\n");
+        const char* erro = cJSON_GetErrorPtr();
+        if (erro != NULL) {
+            printf("Erro de sintaxe no JSON próximo a: %s\n", erro);
+        }
+        return false;
+    }
+    
+    cJSON *item = NULL; 
+    int contador = 0;
+
+    // Itera sobre cada item do array JSON e adiciona à lista do jogador
+    cJSON_ArrayForEach(item, json) {
+        if (contador >= MAX_CARTAS) break; // Evita estouro de memória no array C
+
+        // Dados da carta
+        int id_carta;
+        char nome[100] = "";
+        int atk;
+        int vida;
+        char sprite_carta[150] = "";
+
+        cJSON *id = cJSON_GetObjectItemCaseSensitive(item, "id");
+        cJSON *name = cJSON_GetObjectItemCaseSensitive(item, "name");
+        cJSON *attack = cJSON_GetObjectItemCaseSensitive(item, "attack");
+        cJSON *health = cJSON_GetObjectItemCaseSensitive(item, "health");
+        cJSON *sprite = cJSON_GetObjectItemCaseSensitive(item, "sprite");
+
+        // Copia os dados para a struct do C
+        if (cJSON_IsNumber(id)) id_carta = id->valueint;
+        if (cJSON_IsString(name)) strncpy(nome, name->valuestring, 99);
+        if (cJSON_IsNumber(attack)) atk = attack->valueint;
+        if (cJSON_IsNumber(health)) vida = health->valueint;
+        if (cJSON_IsString(sprite)) strncpy(sprite_carta, sprite->valuestring, 149);
+
+        Carta carta = criarCarta(id_carta, nome, atk, vida, sprite_carta, playerFlag);
+
+        inserirInicio(j->baralho, carta);
+
+        contador++;
+    }
+
+    cJSON_Delete(json);
+    return true;
+}
+
+bool comprarCarta(Jogador jogador){
+    if(jogador == NULL){
+        printf("[ERROR]: comprarCarta() [jogador.c]\n");
+        printf("Player is NULL, cannot draw card\n");
+        return false;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    if(isListaVazia(j->baralho)){
+        printf("[INFO]: comprarCarta() [jogador.c]\n");
+        printf("Deck is empty, cannot draw card\n");
+        return false;
+    }
+
+    Carta carta = (Carta)getItemLista(j->baralho, 0);
+    removerInicio(j->baralho);
+    inserirInicio(j->mao, carta);
+
+    return true;
 }
