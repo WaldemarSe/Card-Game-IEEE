@@ -5,20 +5,22 @@
 
 #include "carta.h"
 
+#include <delimiters.h>
+
 /*
     Um exemplo de como ficariam os arquivos .h
 */
 
 typedef struct{
     int id;
-    char* nome;
+    char nome[MAX_STRSIZE];
     int atk;
     int vida;
     int pos;
     bool playerFlag;
 }carta;
 
-Carta* criarCarta(int id, char* nome, int atk, int vida){
+Carta criarCarta(const char* nome, int atk, int vida){
     carta* c = (carta*)malloc(sizeof(carta));
     if(c == NULL){
         printf("[ERROR]\n");
@@ -27,17 +29,12 @@ Carta* criarCarta(int id, char* nome, int atk, int vida){
         return NULL;
     }
 
-    c->nome = (char*)malloc((strlen(nome) + 1) * sizeof(char));
-    if(c->nome == NULL){
-        printf("[ERROR]\n");
-        printf("in carta.c: criarCarta()\n");
-        printf("Card name memory allocation failed\n");
-        free(c);
-        return NULL;
-    }
-    strcpy(c->nome, nome);
+    strncpy(c->nome, nome, MAX_STRSIZE);
+    c->nome[sizeof(c->nome) - 1] = '\0';
 
-    c->id   = id;
+    static int id = 0;
+
+    c->id   = id++;
     c->atk  = atk;
     c->vida = vida;
 
@@ -45,7 +42,11 @@ Carta* criarCarta(int id, char* nome, int atk, int vida){
     // printf("Card created successfully:\n");
     // printf("ID: [%d], Name: [%s], ATK: [%d], Vida: [%d]\n\n", c->id, c->nome, c->atk, c->vida);
 
-    return (Carta*)c;
+    return c;
+}
+
+bool Carta_isNull(Carta c){
+    return ((carta*)c == NULL);
 }
 
 int getAtk(Carta c){
@@ -98,7 +99,6 @@ void killCarta(Carta c){
     // printf("[INFO]: killCarta() [carta.c]\n");
     // printf("Freeing card memory: [%p]\n", (void*)c_remove);
 
-    free(c_remove->nome);
     free(c_remove);
 
     // printf("Card [%p]: Memory freed successfully\n\n", (void*)c_remove);

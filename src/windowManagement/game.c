@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include <types.h>
+
 typedef struct Resources{
     Font font; // Pra caso tenha mais coisas...
 } Resources;
@@ -12,6 +14,7 @@ typedef struct GameStr{
 
 Game Game_Load(){
     GameStr* g = (GameStr*)malloc(sizeof(GameStr));
+    if(checkAllocation(g, "Game Window Resource Manager")) return NULL;
 
     g->res.font = LoadFontEx("./assets/sprites/KiwiSoda.ttf", 40, NULL, 0);
     

@@ -37,7 +37,9 @@ static void Init(Game game){
 }
 
 static void Update(Game game, float deltaTime){
-    // Update
+    if(Button_isPressedByMouse(startButton)){
+        ChangeScreen(GAMESCREEN);
+    }
 }
 
 static void Draw(Game game, float deltaTime){

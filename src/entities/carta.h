@@ -7,7 +7,9 @@
 
 typedef void* Carta; // Ponteiro para o Card
 
-Carta* criarCarta(int id,char* nome, int atk, int vida);
+Carta criarCarta(const char* nome, int atk, int vida);
+
+bool Carta_isNull(Carta c);
 
 int getAtk(Carta c);
 

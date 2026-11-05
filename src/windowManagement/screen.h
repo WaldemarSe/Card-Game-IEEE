@@ -3,7 +3,7 @@
 
 #include "game.h"
 
-typedef enum { MENUSCREEN, COUNTSCREEN } ScreenId;
+typedef enum { MENUSCREEN, GAMESCREEN, COUNTSCREEN } ScreenId;
 
 typedef struct {
     void (*Init)(Game game);

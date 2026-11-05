@@ -9,7 +9,8 @@
                 "./src/entities",
                 "./src/libraries/libraries",
                 "./src/windowManagement",
-                "./src/windows"
+                "./src/windows",
+                "./src/interfaceEntities"
             ],
             "defines": [
                 "_DEBUG",
