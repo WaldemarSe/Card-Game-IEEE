@@ -92,16 +92,16 @@ void setPlayerFlag(Carta c, bool playerFlag) {((carta *)c)->playerFlag = playerF
 
 
 
-void killCarta(Carta c){
+void killCarta(Item item, void* extra){
     // 1: Verifica se a carta é válida antes de liberar a memória alocada para ela
-    if(c == NULL){
+    if(item == NULL){
         printf("[ERROR]: killCarta() [carta.c]\n");
         printf("Card is NULL, cannot free memory\n");
         return;
     }
 
     // 2: Faz o cast do ponteiro genérico para o tipo específico da estrutura da carta
-    carta* c_remove = (carta *)c;
+    carta* c_remove = (carta *)item;
 
     // 3: Libera a memória alocada para o nome da carta e para a própria estrutura da carta
     free(c_remove->nome);

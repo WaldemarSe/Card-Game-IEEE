@@ -111,7 +111,7 @@ bool removerCarta(Carta** campo, Carta* carta){
     // 2: Remove a carta do campo
     int x = getPosX(carta);
     int y = getPosY(carta);
-    killCarta(campo[x][y]);
+    killCarta(campo[x][y], NULL);
     campo[x][y] = NULL;
     return true;
 }
@@ -180,7 +180,7 @@ void liberarCampo(Carta** campo){
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
             if(campo[i][j] != NULL){
-                killCarta(campo[i][j]);
+                killCarta(campo[i][j], NULL);
                 campo[i][j] = NULL;
                 printCampo(campo);
             }
