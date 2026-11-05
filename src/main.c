@@ -49,7 +49,9 @@ int main(){
         return -1;
     }
 
+    // TESTE: as duas primeiras cartas do baralho do jogador são compradas e adicionadas à mão do jogador, criadas do arquivo json
     // 2: Cria algumas cartas para testar as funções do jogo
+    /*
     Carta carta1 = criarCarta(1, "Carta 1", 1, 1, "", true);
     if(carta1 == NULL){
         printf("[ERROR]\n");
@@ -63,7 +65,7 @@ int main(){
         printf("in main.c: main()\n");
         printf("Failed to create card 2\n");
         return -1;
-    }
+    }*/
     Carta carta3 = criarCarta(3, "Carta 3", 1, 1, "", false);
     if(carta3 == NULL){
         printf("[ERROR]\n");
@@ -71,6 +73,45 @@ int main(){
         printf("Failed to create card 3\n");
         return -1;
     }
+        
+
+    jogador = criarJogador(10);
+    if(jogador == NULL){
+        printf("[ERROR]\n");
+        printf("in main.c: main()\n");
+        printf("Failed to create player\n");
+        return -1;
+    }
+
+    carregarBaralho(jogador, true, "assets/data/cartas.json");
+
+    Lista mao = getMaoJogador(jogador);
+
+    comprarCarta(jogador);
+    comprarCarta(jogador);
+    comprarCarta(jogador);
+
+    if (mao == NULL) {
+        printf("[ERROR]: main.c: main()\n");
+        printf("Failed to get player's hand\n");
+    } else {
+        printf("[INFO]: main.c: main()\n");
+        printf("Player's hand retrieved successfully\n");
+
+        if(isListaVazia(mao)){
+            printf("[INFO]: main.c: main()\n");
+            printf("Player's hand is empty\n");
+        } else {
+            printf("[INFO]: main.c: main()\n");
+            printf("Player's hand has %d cards\n", listaTamanho(mao));
+        }
+    }
+
+    Carta carta1 = getItemLista(mao, 0);
+    removerInicio(mao);
+    Carta carta2 = getItemLista(mao, 0);
+    removerInicio(mao);
+
     Carta carta4 = criarCarta(4, "Carta 4", 10, 10, "", false);
     if(carta4 == NULL){
         printf("[ERROR]\n");
@@ -86,8 +127,13 @@ int main(){
         return -1;
     }
 
+    if (carta1 == NULL || carta2 == NULL) {
+        printf("[ERROR]: main.c: main()\n");
+        printf("Failed to retrieve cards from player's hand\n");
+    }
+
     // 3: ADIÇÃO E REMOÇÃO DE CARTAS
-    printf("\nTESTING ADDING AND REMOVING CARDS\n");
+    printf("\nTESTING ADDING ANzD REMOVING CARDS\n");
     adicionarCarta(campo, carta5, 0);
     printCampo(campo);
     removerCarta(campo, carta5);
@@ -120,6 +166,7 @@ int main(){
     printf("\nTESTING FREEING GAME FIELD MEMORY\n");
     printCampo(campo);
     liberarCampo(campo);
+    liberarJogador(jogador);
 
     printf("\n");
     printf("|| =========================== Ending Game ============================= ||\n\n");

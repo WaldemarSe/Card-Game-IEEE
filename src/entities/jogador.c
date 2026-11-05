@@ -4,7 +4,6 @@
 
 #include "jogador.h"
 #include "carta.h"
-#include "../libraries/data_structures/lista.h"
 #include "../libraries/json_functions/cJSON.h"
 
 #define MAX_CARTAS 3
@@ -54,6 +53,32 @@ int getVidaJogador(Jogador jogador){
     jogadorStr* j = (jogadorStr*)jogador;
 
     return j->vida;
+}
+
+Lista getMaoJogador(Jogador jogador){
+    
+    if(jogador == NULL){
+        printf("[ERROR]: getMaoJogador() [jogador.c]\n");
+        printf("Player is NULL, cannot get hand\n");
+        return NULL;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    return j->mao;
+}
+
+Lista getBaralhoJogador(Jogador jogador){
+    
+    if(jogador == NULL){
+        printf("[ERROR]: getBaralhoJogador() [jogador.c]\n");
+        printf("Player is NULL, cannot get deck\n");
+        return NULL;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    return j->baralho;
 }
 
 bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquivo){
@@ -128,6 +153,9 @@ bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquiv
         if (cJSON_IsNumber(health)) vida = health->valueint;
         if (cJSON_IsString(sprite)) strncpy(sprite_carta, sprite->valuestring, 149);
 
+        printf("[INFO]: carregarBaralho() [jogador.c]\n");
+        printf("Card [%d] loaded: %s (ATK: %d, HP: %d, SPRITE: %s)\n", id_carta, nome, atk, vida, sprite_carta);
+
         Carta carta = criarCarta(id_carta, nome, atk, vida, sprite_carta, playerFlag);
 
         inserirInicio(j->baralho, carta);
@@ -159,4 +187,23 @@ bool comprarCarta(Jogador jogador){
     inserirInicio(j->mao, carta);
 
     return true;
+}
+
+void liberarJogador(Jogador jogador){
+
+    if(jogador == NULL){
+        printf("[ERROR]: liberarJogador() [jogador.c]\n");
+        printf("Player is NULL, cannot free memory\n");
+        return;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    // Libera a memória da mão do jogador
+    limparLista(j->mao, killCarta, NULL);
+    // Libera a memória do baralho do jogador
+    limparLista(j->baralho, killCarta, NULL);
+
+    // Libera a memória do jogador
+    free(j);
 }

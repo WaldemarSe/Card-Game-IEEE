@@ -1,6 +1,8 @@
 #ifndef _CARD_h_
 #define _CARD_h_
 
+#include "../libraries/data_structures/lista.h"
+
 /*
     Um exemplo de como ficariam os arquivos .h
 */
@@ -35,7 +37,7 @@ bool getPlayerFlag(Carta c);
 
 void setPlayerFlag(Carta c, bool playerFlag);
 
-void killCarta(Carta c);
+void killCarta(Item item, void* extra);
 
 /* 
 
