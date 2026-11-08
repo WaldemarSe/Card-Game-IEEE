@@ -5,129 +5,101 @@
 
 #include "carta.h"
 
+#include <delimiters.h>
+
 /*
     Um exemplo de como ficariam os arquivos .h
 */
 
 typedef struct{
     int id;
-    char* nome;
+    char nome[MAX_STRSIZE];
     int atk;
     int vida;
-    int pos[2];
-    char* sprite;
+    int pos;
     bool playerFlag;
 }carta;
 
-Carta criarCarta(int id, char* nome, int atk, int vida, char* sprite, bool playerFlag){
-    // 1: Aloca memória para a estrutura da carta
+Carta criarCarta(const char* nome, int atk, int vida){
     carta* c = (carta*)malloc(sizeof(carta));
     if(c == NULL){
-        printf("[ERROR]: criarCarta() [carta.c]\n");
+        printf("[ERROR]\n");
+        printf("in carta.c: criarCarta()\n");
         printf("Card memory allocation failed\n");
         return NULL;
     }
 
-    // 2: Aloca memória para o nome da carta e copia o nome fornecido para a estrutura da carta
-    c->nome = (char*)malloc((strlen(nome) + 1) * sizeof(char));
-    if(c->nome == NULL){
-        printf("[ERROR]: criarCarta() [carta.c]\n");
-        printf("Card [name] memory allocation failed\n");
-        free(c);
-        return NULL;
-    }
-    strcpy(c->nome, nome);
+    strncpy(c->nome, nome, MAX_STRSIZE);
+    c->nome[sizeof(c->nome) - 1] = '\0';
 
-    // 3: Aloca memória para o sprite da carta e copia o caminho fornecido para a estrutura da carta
-    c->sprite = (char*)malloc((strlen(sprite) + 1) * sizeof(char));
-    if(c->sprite == NULL){
-        printf("[ERROR]: criarCarta() [carta.c]\n");
-        printf("Card [sprite] memory allocation failed\n");
-        free(c->nome);
-        free(c);
-        return NULL;
-    }
-    strcpy(c->sprite, sprite);
+    static int id = 0;
 
-    // 4: Inicializa os atributos da carta com os valores fornecidos
-    c->id   = id;
+    c->id   = id++;
     c->atk  = atk;
     c->vida = vida;
-    c->playerFlag = playerFlag;
-    c->pos[0] = 0;
-    c->pos[1] = 0;
-    c->sprite = NULL; // Inicializa o sprite como NULL, pode ser definido posteriormente
 
     // printf("[INFO]: criarCarta() [carta.c]\n");
-    // printf("Card [%d] created successfully\n", c->id);
-    // printf("Name: %s\n", c->nome);
-    // printf("Attack: %d\n", c->atk);
-    // printf("Life: %d\n", c->vida);
-    // printf("Position: [%d, %d]\n", c->pos[0], c->pos[1]);
-    // printf("Flag: %s\n\n", c->playerFlag ? "Player" : "Opponent");
+    // printf("Card created successfully:\n");
+    // printf("ID: [%d], Name: [%s], ATK: [%d], Vida: [%d]\n\n", c->id, c->nome, c->atk, c->vida);
 
-    // 5: Retorna o ponteiro para a carta criada
-    return (Carta*)c;
+    return c;
 }
 
-void killCarta(Item item, void* extra){
-    extra = extra; // Evita warnings de variável não utilizada
+bool Carta_isNull(Carta c){
+    return ((carta*)c == NULL);
+}
 
-    // 1: Verifica se a carta é válida antes de liberar a memória alocada para ela
-    if(item == NULL){
-        printf("[ERROR]: killCarta() [carta.c]\n");
+int getAtk(Carta c){
+    return ((carta *)c)->atk;
+}
+
+int getVida(Carta c){
+    return ((carta *)c)->vida;
+}
+
+int getID(Carta c){
+    if(c == NULL) {return 0;}
+    else          {return ((carta *)c)->id;}
+}
+
+int getPos(Carta c){
+    return ((carta *)c)->pos;
+}
+
+bool getPlayerFlag(Carta c){
+    return ((carta *)c)->playerFlag;
+}
+
+void setPlayerFlag(Carta c, bool playerFlag){
+    ((carta *)c)->playerFlag = playerFlag;
+}
+    
+void setPos(Carta c, int pos){
+    ((carta *)c)->pos = pos;
+}
+
+void setVida(Carta c, int vida){
+    ((carta *)c)->vida = vida;
+}
+
+void setAtk(Carta c, int atk){
+    ((carta *)c)->atk = atk;
+}
+
+void killCarta(Carta c){
+    if(c == NULL){
+        printf("[ERROR]\n");
+        printf("in carta.c: killCarta()\n");
         printf("Card is NULL, cannot free memory\n");
         return;
     }
 
-    // 2: Faz o cast do ponteiro genérico para o tipo específico da estrutura da carta
-    carta* c_remove = (carta *)item;
+    carta* c_remove = (carta *)c;
 
-    // 3: Libera a memória alocada para o nome da carta e para a própria estrutura da carta
-    free(c_remove->nome);
+    // printf("[INFO]: killCarta() [carta.c]\n");
+    // printf("Freeing card memory: [%p]\n", (void*)c_remove);
+
     free(c_remove);
+
+    // printf("Card [%p]: Memory freed successfully\n\n", (void*)c_remove);
 }
-
-void printCarta(Carta c, void* extra) {
-    extra = extra; // Evita warnings de variável não utilizada
-
-    if(c == NULL){
-        printf("[ERROR]: printCarta() [carta.c]\n");
-        printf("Card is NULL, cannot print\n");
-        return;
-    }
-
-    carta* card = (carta*)c;
-
-    printf("[INFO]: printCarta() [carta.c]\n");
-    printf("Card ID: %d\n", card->id);
-    printf("Name: %s\n", card->nome);
-    printf("Attack: %d\n", card->atk);
-    printf("Life: %d\n", card->vida);
-    printf("Position: [%d, %d]\n", card->pos[0], card->pos[1]);
-    printf("Sprite: %s\n", card->sprite);
-    printf("Player Flag: %s\n\n", card->playerFlag ? "Player" : "Opponent");
-}
-
-
-int getID(Carta c) {return ((carta *)c)->id;}
-
-char* getNome(Carta c) {return ((carta *)c)->nome;}
-
-int  getAtk(Carta c)          {return ((carta *)c)->atk;}
-void setAtk(Carta c, int atk) {((carta *)c)->atk = atk;}
-
-int  getVida(Carta c)           {return ((carta *)c)->vida;}
-void setVida(Carta c, int vida) {((carta *)c)->vida = vida;}
-
-int  getPosX(Carta c)            {return ((carta *)c)->pos[0];}
-int  getPosY(Carta c)            {return ((carta *)c)->pos[1];}
-void setPos(Carta c, int pos[2]) {((carta *)c)->pos[0] = pos[0]; ((carta *)c)->pos[1] = pos[1];}
-
-char* getSprite(Carta c) {return ((carta *)c)->sprite;}
-
-bool getPlayerFlag(Carta c)                  {return ((carta *)c)->playerFlag;}
-void setPlayerFlag(Carta c, bool playerFlag) {((carta *)c)->playerFlag = playerFlag;}
-    
-
-

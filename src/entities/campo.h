@@ -1,11 +1,11 @@
-#ifndef _GAME_H_
-#define _GAME_H_
+#ifndef _CAMPO_H_
+#define _CAMPO_H_
 
-/** GAME: Campo/Jogo
- * @file game.h
+/** CAMPO: Campo/Jogo
+ * @file campo.h
  * @authors André Felipe Ijiri Ribeiro(andre.ijiri.ribeiro@gmail.com) e Bruna Yokoshiro()
  * @brief Classe que representa o jogo ou o campo de jogo.
- * @date 2023-04-01
+ * @date 2026-09-01
  * 
  * Para fins de simplificação, a classe Jogo (ou Campo) será responsável por rodar toda a interface 
  * bem como os dados essenciais para a partida (jogadores, cartas, o campo propriamente dito, etc.). 
@@ -25,55 +25,49 @@
 #include "carta.h"
 #include "jogador.h"
 
-typedef void* Carta;
+typedef void* Campo;
 
 /* =============================================== FUNÇÕES PRINCIPAIS ================================================ */
 /** criarCampo
  * @brief Cria o campo de jogo, inicializando os elementos e estruturas essenciais para a partida.
  * @return Retorna um ponteiro para o campo criado.
  */
-Carta** criarCampo();
+Campo criarCampo();
 
 /** adicionarCarta
  * @brief Adiciona uma carta ao campo de jogo, atualizando as estruturas e elementos visuais conforme necessário.
  * 
  * @param campo         Ponteiro para o campo onde a carta será adicionada.
  * @param carta         Ponteiro para a carta a ser adicionada.
+ * @param playerFlag    Flag que indica se a carta pertence ao jogador (true) ou ao oponente (false).
  * @param pos           Posição onde a carta deve ser adicionada.
  * 
  * @return Retorna TRUE se a carta foi adicionada com sucesso. FALSE caso contrário.
  */
-bool adicionarCarta(Carta** campo, Carta* carta, int pos);
+bool adicionarCarta(Campo campo, Carta carta, bool playerFlag, int pos);
 
 /** removerCarta
  * @brief Remove uma carta do campo de jogo, atualizando as estruturas e elementos visuais conforme necessário.
  * 
  * @param campo         Ponteiro para o campo de onde a carta será removida.
  * @param carta         Ponteiro para a carta a ser removida.
+ * @param playerFlag    Flag que indica se a carta pertence ao jogador (true) ou ao oponente (false).
+ * @param pos           Posição onde a carta deve ser removida.
  * 
- * @return Retorna TRUE se a carta foi removida com sucesso. FALSE caso contrário.
+ * @return Retorna o ponteiro para a carta que foi removida de campo.
  */
-bool removerCarta(Carta** campo, Carta* carta);
+Carta removerCarta(Campo campo, Carta carta, bool playerFlag, int pos);
 
-/** atacarCartas
+/** atacarCarta
  * @brief Realiza um ataque de uma carta atacante contra uma carta alvo, aplicando as regras do jogo.
  * 
- * @param campo         Ponteiro para o campo de jogo.
- * @param ataqueFlag    Flag que indica se o ataque é do jogador ou do oponente.
- * @param jogador       Ponteiro para o jogador que está atacando.
+ * @param campo     Ponteiro para o campo de jogo.
+ * @param atacante  Ponteiro para a carta atacante.
+ * @param alvo      Ponteiro para a carta alvo.
  * 
- * @return Retorna 0 se o ataque foi realizado com sucesso. -1 se houve algum erro (ex: campo nulo).
+ * @return Retorna um valor inteiro representando o resultado do ataque (ex: dano causado, status da carta alvo, etc.).
  */
-int atacarCartas(Carta** campo, bool ataqueFlag, Jogador* jogador);
-
-/** moverCartas
- * @brief Move todas as cartas do campo de jogo uma posição para frente, atualizando as estruturas e elementos visuais conforme necessário.
- * 
- * @param campo Ponteiro para o campo de jogo.
- * 
- * @return Não há retorno. Somente atualização do estado do campo de jogo.
- */
-void moverCartas(Carta** campo);
+int atacarCarta(Campo campo, Carta atacante, Carta alvo);
 
 /** liberarCampo
  * @brief Libera a memória alocada para o campo de jogo, garantindo que todos os recursos sejam corretamente desalocados.
@@ -81,7 +75,7 @@ void moverCartas(Carta** campo);
  * 
  * @param campo Ponteiro para o campo a ser liberado.
  */
-void liberarCampo(Carta** campo);
+void liberarCampo(Campo campo);
 /* =================================================================================================================== */
 
 /* =============================================== FUNÇÕES SECUNDÁRIAS =============================================== */
@@ -90,26 +84,18 @@ void liberarCampo(Carta** campo);
  * 
  * @param campo Ponteiro para o campo a ser impresso.
  */
-void printCampo(Carta** campo);
+void printCampo(Campo campo);
 
-/** playerAtaque
- * @brief Realiza um ataque de uma carta contra o alvo, aplicando as regras do jogo para o jogador.
+/** getItemFromPositionCampo
+ * @brief Retorna o item na posição designada.
  * 
- * @param campo     Ponteiro para o campo de jogo.
+ * @param campo Ponteiro para o campo a ser procurado o item.
+ * @param x Índice X.
+ * @param y Índice Y.
  * 
- * @return Retorna 0 se o ataque foi realizado com sucesso. -1 se houve algum erro (ex: campo nulo).
- */
-int playerAtaque(Carta** campo);
-
-/** oponenteAtaque
- * @brief Realiza um ataque de uma carta atacante contra uma carta alvo, aplicando as regras do jogo para o oponente.
- * 
- * @param campo     Ponteiro para o campo de jogo.
- * @param jogador   Ponteiro para o jogador que está atacando.
- * 
- * @return Retorna 0 se o ataque foi realizado com sucesso. -1 se houve algum erro (ex: campo nulo).
- */
-int oponenteAtaque(Carta** campo, Jogador* jogador);
+ * @return Retorna o item na posição [x, y].
+*/
+Carta getItemFromPositionCampo(Campo campo, int x, int y);
 /* =================================================================================================================== */
 
 #endif

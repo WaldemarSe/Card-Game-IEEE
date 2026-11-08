@@ -7,8 +7,10 @@
                 "C:/raylib/raylib/src/**",
                 "C:/MinGW/include/**",
                 "./src/entities",
-                "./src/libraries/data_structures",
-                "./src/libraries/rayexts"
+                "./src/libraries/libraries",
+                "./src/windowManagement",
+                "./src/windows",
+                "./src/interfaceEntities"
             ],
             "defines": [
                 "_DEBUG",
