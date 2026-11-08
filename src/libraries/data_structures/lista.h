@@ -133,6 +133,15 @@ bool isInLista(Lista lista, compararItens compFunc, Item item);
 Item getItemLista(Lista lista, int index);
 
 /**
+ * @brief Percorre a lista fornecida até o index do dado elemento de 0 ate' tam-1, alterando o item na posição especificada.
+ * @param lista Lista genérica para percorrer.
+ * @param index Inteiro usado para indicar a posição do item.
+ * @param item Item a ser inserido na posição especificada.
+ * @return Retorna Verdadeiro (True) caso o item seja inserido com sucesso, Falso (False) caso contrário.
+ */
+bool setItemLista(Lista lista, int index, Item item);
+
+/**
  * @brief Busca e retorna o index do item da lista que satisfaz a funcao de comparacao, o index va'lido esta' entre
  * 0 e tam-1.
  * @param lista Lista gene'rica para busca.

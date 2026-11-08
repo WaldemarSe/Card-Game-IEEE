@@ -207,3 +207,37 @@ void liberarJogador(Jogador jogador){
     // Libera a memória do jogador
     free(j);
 }
+
+void embaralharBaralho(Jogador jogador){
+    if(jogador == NULL){
+        printf("[ERROR]: embaralharBaralho() [jogador.c]\n");
+        printf("Player is NULL, cannot shuffle deck\n");
+        return;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    // Implementação do algoritmo de embaralhamento (Fisher-Yates)
+    int tamanho = listaTamanho(j->baralho);
+    for(int i = tamanho - 1; i > 0; i--){
+        int jIndex = rand() % (i + 1);
+        Item temp = getItemLista(j->baralho, i);
+        setItemLista(j->baralho, i, getItemLista(j->baralho, jIndex));
+        setItemLista(j->baralho, jIndex, temp);
+    }
+}
+
+void printBaralho(Jogador jogador){
+    if(jogador == NULL){
+        printf("[ERROR]: printBaralho() [jogador.c]\n");
+        printf("Player is NULL, cannot print deck\n");
+        return;
+    }
+
+    jogadorStr* j = (jogadorStr*)jogador;
+
+    printf("[INFO]: printBaralho() [jogador.c]\n");
+    printf("Player's Deck:\n");
+
+    percorrerLista(j->baralho, printCarta, NULL);
+}

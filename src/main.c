@@ -87,6 +87,19 @@ int main(){
 
     Lista mao = getMaoJogador(jogador);
 
+    printf("\n");
+    printBaralho(jogador);
+    printf("======================================================================\n");
+    embaralharBaralho(jogador);
+    printBaralho(jogador);
+    printf("======================================================================\n");
+    embaralharBaralho(jogador);
+    printBaralho(jogador);
+    printf("======================================================================\n");
+    embaralharBaralho(jogador);
+    printBaralho(jogador);
+    printf("======================================================================\n");
+
     comprarCarta(jogador);
     comprarCarta(jogador);
     comprarCarta(jogador);

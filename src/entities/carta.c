@@ -70,6 +70,46 @@ Carta criarCarta(int id, char* nome, int atk, int vida, char* sprite, bool playe
     return (Carta*)c;
 }
 
+void killCarta(Item item, void* extra){
+    extra = extra; // Evita warnings de variável não utilizada
+
+    // 1: Verifica se a carta é válida antes de liberar a memória alocada para ela
+    if(item == NULL){
+        printf("[ERROR]: killCarta() [carta.c]\n");
+        printf("Card is NULL, cannot free memory\n");
+        return;
+    }
+
+    // 2: Faz o cast do ponteiro genérico para o tipo específico da estrutura da carta
+    carta* c_remove = (carta *)item;
+
+    // 3: Libera a memória alocada para o nome da carta e para a própria estrutura da carta
+    free(c_remove->nome);
+    free(c_remove);
+}
+
+void printCarta(Carta c, void* extra) {
+    extra = extra; // Evita warnings de variável não utilizada
+
+    if(c == NULL){
+        printf("[ERROR]: printCarta() [carta.c]\n");
+        printf("Card is NULL, cannot print\n");
+        return;
+    }
+
+    carta* card = (carta*)c;
+
+    printf("[INFO]: printCarta() [carta.c]\n");
+    printf("Card ID: %d\n", card->id);
+    printf("Name: %s\n", card->nome);
+    printf("Attack: %d\n", card->atk);
+    printf("Life: %d\n", card->vida);
+    printf("Position: [%d, %d]\n", card->pos[0], card->pos[1]);
+    printf("Sprite: %s\n", card->sprite);
+    printf("Player Flag: %s\n\n", card->playerFlag ? "Player" : "Opponent");
+}
+
+
 int getID(Carta c) {return ((carta *)c)->id;}
 
 char* getNome(Carta c) {return ((carta *)c)->nome;}
@@ -91,19 +131,3 @@ void setPlayerFlag(Carta c, bool playerFlag) {((carta *)c)->playerFlag = playerF
     
 
 
-
-void killCarta(Item item, void* extra){
-    // 1: Verifica se a carta é válida antes de liberar a memória alocada para ela
-    if(item == NULL){
-        printf("[ERROR]: killCarta() [carta.c]\n");
-        printf("Card is NULL, cannot free memory\n");
-        return;
-    }
-
-    // 2: Faz o cast do ponteiro genérico para o tipo específico da estrutura da carta
-    carta* c_remove = (carta *)item;
-
-    // 3: Libera a memória alocada para o nome da carta e para a própria estrutura da carta
-    free(c_remove->nome);
-    free(c_remove);
-}
