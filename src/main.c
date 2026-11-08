@@ -18,7 +18,7 @@
 #include "carta.h"
 #include "campo.h"
 
-extern Screen MenuScreen, GameScreen;
+extern Screen TestScreen, MenuScreen, GameScreen;
 Screen gScreens[] = {};
 
 static ScreenId current, next;
@@ -42,8 +42,9 @@ int main(){
     
     Game game = Game_Load(); // (recursos, so' a fonte por enquanto)
 
-    gScreens[0] = MenuScreen;
-    gScreens[1] = GameScreen;
+    gScreens[0] = TestScreen;
+    gScreens[1] = MenuScreen;
+    gScreens[2] = GameScreen;
     // gScreens[...] == ... (caso tenham mais telas)
 
     current = MENUSCREEN;
