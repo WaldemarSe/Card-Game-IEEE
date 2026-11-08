@@ -21,33 +21,34 @@
 */
 
 // Exemplo de variável estática global para ser acessada em múltiplas partes do arquivo.
-static Jogador j = NULL;
+static Jogador jogador = NULL;
+static Campo campo = NULL;
 
 static void Init(Game game){
     UNUSED(game);
 
-    j = criarJogador(10);
+    jogador = criarJogador(10);
 
-    bool suc = carregarBaralho(j, true, "./assets/data/cartas.json");
+    bool suc = carregarBaralho(jogador, true, "./assets/data/cartas.json");
     if(!suc) printf("\n\nErro ao carregar baralho :(\n\n");
 
-    embaralharBaralho(j);
+    embaralharBaralho(jogador);
 
-    printBaralho(j);
+    printBaralho(jogador);
 
     ///////////////////////////////////////////////////////
 
-    Campo c = criarCampo();
+    campo = criarCampo();
 
-    suc = comprarCarta(j);
+    suc = comprarCarta(jogador);
     if(!suc) printf("\n\nErro ao comprar carta do jogador :(\n\n");
 
-    Lista jMao = getMaoJogador(j);
+    Lista jMao = getMaoJogador(jogador);
 
     Carta carta = removerInicio(jMao);
-    adicionarCarta(c, carta, 2);
+    adicionarCarta(campo, carta, 2);
 
-    printCampo(c);
+    printCampo(campo);
 }
 
 static void Update(Game game, float deltaTime){
@@ -62,6 +63,10 @@ static void Draw(Game game, float deltaTime){
 
 static void Unload(Game game){
     UNUSED(game);
+
+    Lista cartasCampo = liberarCampo(campo);
+    destroiLista(cartasCampo, runExtra, killCarta);
+    liberarJogador(jogador);
 }
 
 Screen TestScreen = { Init, Update, Draw, Unload };
