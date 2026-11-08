@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "campo.h"
 #include "jogador.h"
 
 /** TELA DE TESTE
@@ -23,7 +24,9 @@
 static Jogador j = NULL;
 
 static void Init(Game game){
-    Jogador j = criarJogador(10);
+    UNUSED(game);
+
+    j = criarJogador(10);
 
     bool suc = carregarBaralho(j, true, "./assets/data/cartas.json");
     if(!suc) printf("\n\nErro ao carregar baralho :(\n\n");
@@ -31,15 +34,34 @@ static void Init(Game game){
     embaralharBaralho(j);
 
     printBaralho(j);
+
+    ///////////////////////////////////////////////////////
+
+    Campo c = criarCampo();
+
+    suc = comprarCarta(j);
+    if(!suc) printf("\n\nErro ao comprar carta do jogador :(\n\n");
+
+    Lista jMao = getMaoJogador(j);
+
+    Carta carta = removerInicio(jMao);
+    adicionarCarta(c, carta, 2);
+
+    printCampo(c);
 }
 
 static void Update(Game game, float deltaTime){
+    UNUSED(game);
+    UNUSED(deltaTime);
 }
 
 static void Draw(Game game, float deltaTime){
+    UNUSED(game);
+    UNUSED(deltaTime);
 }
 
 static void Unload(Game game){
+    UNUSED(game);
 }
 
 Screen TestScreen = { Init, Update, Draw, Unload };

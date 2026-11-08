@@ -5,6 +5,8 @@
 #include "jogador.h"
 
 static void Init(Game game){
+    UNUSED(game);
+
     Jogador j = criarJogador(10);
 
     bool suc = carregarBaralho(j, true, "./assets/data/cartas.json");
@@ -16,12 +18,17 @@ static void Init(Game game){
 }
 
 static void Update(Game game, float deltaTime){
+    UNUSED(game);
+    UNUSED(deltaTime);
 }
 
 static void Draw(Game game, float deltaTime){
+    UNUSED(game);
+    UNUSED(deltaTime);
 }
 
 static void Unload(Game game){
+    UNUSED(game);
 }
 
 Screen GameScreen = { Init, Update, Draw, Unload };

@@ -74,7 +74,7 @@ bool adicionarCarta(Campo campo, Carta carta, int pos){
     }
     if(pos < 0 || pos > COLS-1){
         printf("[ERROR]: adicionarCarta() [campo.c]\n");
-        printf("Position %d is out of bounds for the field of columns: [0 - %d]\n", pos, COLS);
+        printf("Position %d is out of bounds for the field of columns: [0 - %d]\n", pos, COLS-1);
         return false;
     }
 
@@ -222,6 +222,7 @@ Lista liberarCampo(Campo campo){
 
     free(c);
 
+    return cartasLista;
 }
 /* =================================================================================================================== */
 
