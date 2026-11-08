@@ -259,7 +259,7 @@ void Field_DrawFromMatrixObject(Field field){
         for(int j = 0; j < f->matrixSizeY; j++){
             Carta c = f->matrixFunc(f->matrix, i, j);
 
-            if(!Carta_isNull(c)){
+            if(c != NULL){
                 int id = getID(c);
 
                 Card card = Card_GetById(id);

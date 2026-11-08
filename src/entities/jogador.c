@@ -2,20 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cJSON.h>
+
 #include "jogador.h"
 #include "carta.h"
-#include "../libraries/json_functions/cJSON.h"
 
 #define MAX_CARTAS 3
 
-typedef struct {
+typedef struct JogadorStr{
     int vida;
+
     Lista mao;
     Lista baralho;
-}jogadorStr;
+} JogadorStr;
 
 Jogador criarJogador(int vida){
-    jogadorStr* jogador = (jogadorStr*)malloc(sizeof(jogadorStr));
+    JogadorStr* jogador = (JogadorStr*)malloc(sizeof(JogadorStr));
     
     if(jogador == NULL){
         printf("[ERROR]: criarJogador() [jogador.c]\n");
@@ -24,72 +26,65 @@ Jogador criarJogador(int vida){
     }
 
     jogador->vida = vida;
+
     jogador->mao = criaLista();
     jogador->baralho = criaLista();
+    
     return jogador;
 }
 
 void setVidaJogador(Jogador jogador, int vida){
-
     if(jogador == NULL){
         printf("[ERROR]: setVidaJogador() [jogador.c]\n");
         printf("Player is NULL, cannot set life\n");
         return;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
-    
+    JogadorStr* j = (JogadorStr*)jogador;
     j->vida = vida;
 }
 
 int getVidaJogador(Jogador jogador){
-    
     if(jogador == NULL){
         printf("[ERROR]: getVidaJogador() [jogador.c]\n");
         printf("Player is NULL, cannot get life\n");
         return -1;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
-
+    JogadorStr* j = (JogadorStr*)jogador;
     return j->vida;
 }
 
 Lista getMaoJogador(Jogador jogador){
-    
     if(jogador == NULL){
         printf("[ERROR]: getMaoJogador() [jogador.c]\n");
         printf("Player is NULL, cannot get hand\n");
         return NULL;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
-
+    JogadorStr* j = (JogadorStr*)jogador;
     return j->mao;
 }
 
 Lista getBaralhoJogador(Jogador jogador){
-    
     if(jogador == NULL){
         printf("[ERROR]: getBaralhoJogador() [jogador.c]\n");
         printf("Player is NULL, cannot get deck\n");
         return NULL;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
-
+    JogadorStr* j = (JogadorStr*)jogador;
     return j->baralho;
 }
 
 bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquivo){
-    
     if(jogador == NULL){
         printf("[ERROR]: carregarBaralho() [jogador.c]\n");
         printf("Player is NULL, cannot load deck\n");
         return false;
     }
     
-    jogadorStr* j = (jogadorStr*)jogador;
+    JogadorStr* j = (JogadorStr*)jogador;
     
     // Leitura do arquivo JSON
     FILE* file = fopen(caminhoArquivo, "rb");
@@ -156,7 +151,7 @@ bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquiv
         printf("[INFO]: carregarBaralho() [jogador.c]\n");
         printf("Card [%d] loaded: %s (ATK: %d, HP: %d, SPRITE: %s)\n", id_carta, nome, atk, vida, sprite_carta);
 
-        Carta carta = criarCarta(id_carta, nome, atk, vida, sprite_carta, playerFlag);
+        Carta carta = criarCarta(nome, atk, vida, sprite_carta, playerFlag);
 
         inserirInicio(j->baralho, carta);
 
@@ -174,7 +169,7 @@ bool comprarCarta(Jogador jogador){
         return false;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
+    JogadorStr* j = (JogadorStr*)jogador;
 
     if(isListaVazia(j->baralho)){
         printf("[INFO]: comprarCarta() [jogador.c]\n");
@@ -182,27 +177,26 @@ bool comprarCarta(Jogador jogador){
         return false;
     }
 
-    Carta carta = (Carta)getItemLista(j->baralho, 0);
-    removerInicio(j->baralho);
+    Carta carta = removerInicio(j->baralho);
     inserirInicio(j->mao, carta);
 
     return true;
 }
 
 void liberarJogador(Jogador jogador){
-
     if(jogador == NULL){
         printf("[ERROR]: liberarJogador() [jogador.c]\n");
         printf("Player is NULL, cannot free memory\n");
         return;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
+    JogadorStr* j = (JogadorStr*)jogador;
 
     // Libera a memória da mão do jogador
-    limparLista(j->mao, killCarta, NULL);
+    limparLista(j->mao, freeExtra, killCarta);
+
     // Libera a memória do baralho do jogador
-    limparLista(j->baralho, killCarta, NULL);
+    limparLista(j->baralho, freeExtra, killCarta);
 
     // Libera a memória do jogador
     free(j);
@@ -215,14 +209,18 @@ void embaralharBaralho(Jogador jogador){
         return;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
+    JogadorStr* j = (JogadorStr*)jogador;
 
     // Implementação do algoritmo de embaralhamento (Fisher-Yates)
     int tamanho = listaTamanho(j->baralho);
+
     for(int i = tamanho - 1; i > 0; i--){
         int jIndex = rand() % (i + 1);
+
         Item temp = getItemLista(j->baralho, i);
-        setItemLista(j->baralho, i, getItemLista(j->baralho, jIndex));
+        Item ant = getItemLista(j->baralho, jIndex);
+
+        setItemLista(j->baralho, i, ant);
         setItemLista(j->baralho, jIndex, temp);
     }
 }
@@ -234,10 +232,10 @@ void printBaralho(Jogador jogador){
         return;
     }
 
-    jogadorStr* j = (jogadorStr*)jogador;
+    JogadorStr* j = (JogadorStr*)jogador;
 
     printf("[INFO]: printBaralho() [jogador.c]\n");
     printf("Player's Deck:\n");
 
-    percorrerLista(j->baralho, printCarta, NULL);
+    percorrerLista(j->baralho, runExtra, printCarta);
 }

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "../libraries/data_structures/lista.h"
+#include <lista.h>
 
 /** JOGADOR:  
  * @file jogador.h
@@ -40,6 +40,7 @@ Jogador criarJogador(int vida);
 
 /** carregarBaralho
  * @brief Carrega o baralho do jogador especificado a partir de um arquivo.
+ * NOTA: caminhoArquivo utiliza um caminho para o .json
  * 
  * @param jogador        Ponteiro para o jogador.
  * @param playerFlag     Flag indicando se é o jogador humano (true) ou o computador (false).
