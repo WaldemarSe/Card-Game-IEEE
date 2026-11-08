@@ -356,6 +356,26 @@ Item getItemLista(Lista lista, int index){
     return cel->item;
 }
 
+bool setItemLista(Lista lista, int index, Item item){
+    if(lista == NULL){
+        printf("\n - setItemLista() -> Lista passada e' nula.");
+        return false;
+    }
+
+    listaStr* l = (listaStr*)lista;
+
+    if (index < 0 || index >= l->tamanho) return false;
+
+    Celula* cel = l->inicio;
+
+    for(int i = 0; (i < index) && (cel != NULL); i++){
+        cel = cel->prox;
+    }
+
+    cel->item = item;
+    return true;
+}
+
 int getItemIndexLista(Lista lista, compararItens compFunc, Item item){
     if(lista == NULL){
         printf("\n - getItemIndexLista() -> Lista passada e' nula.");
