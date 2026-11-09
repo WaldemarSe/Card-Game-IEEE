@@ -45,6 +45,8 @@ Campo criarCampo();
  */
 bool adicionarCarta(Campo campo, Carta carta, int pos);
 
+Carta getCartaFromPos(Campo campo, int x, int y);
+
 /** removerCarta
  * @brief Remove uma carta do campo de jogo, atualizando as estruturas e elementos visuais conforme necessário.
  * NOTA: A carta é removida do campo, a devida liberação da carta deve ser feita externamente.

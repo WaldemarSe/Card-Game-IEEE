@@ -104,6 +104,12 @@ bool adicionarCarta(Campo campo, Carta carta, int pos){
     }
 }
 
+Carta getCartaFromPos(Campo campo, int x, int y){
+    CampoStr* c = (CampoStr*)campo;
+
+    return c->cartas[x][y];
+}
+
 bool removerCarta(Campo campo, Carta carta){
     CampoStr* c = (CampoStr*)campo;
 

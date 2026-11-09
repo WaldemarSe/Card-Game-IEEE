@@ -53,6 +53,9 @@ typedef Item (*getItemFuncMatrix) (Item item, int x, int y);
 
 void Field_AssignMatrixObject(Field field, Item object, getItemFuncMatrix objSearchFunc, int sizeX, int sizeY);
 
+// Para MatrixObject
+void Field_AssignSlotSprite(Field field, Texture2D txr);
+
 Vector2 Field_GetPosition(Field field);
 
 Vector2 Field_GetLastPosition(Field field);

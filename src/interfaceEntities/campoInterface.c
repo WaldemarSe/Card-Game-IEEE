@@ -216,22 +216,30 @@ float Field_GetRotation(Field field){
 void Field_Draw(Field field){
     FieldStr* f = (FieldStr*)field;
 
-    // Textura e' opcional: sem ela, desenha so' o contorno do campo
-    if(f->img.id == 0){
-        DrawRectangleLinesEx(f->rect, 2.0f, f->cor);
-        return;
+    Vector2 step = {f->rect.width / f->matrixSizeX, f->rect.height / f->matrixSizeY};
+
+    for(int i = 0; i < f->matrixSizeX; i++){
+        for(int j = 0; j < f->matrixSizeY; j++){
+            DrawRectangle(f->rect.x + (j * step.x), f->rect.y + (i * step.y), step.x * 0.8f, step.y * 0.8f, WHITE);
+        }
     }
 
-    Rectangle source = (Rectangle){0, 0, (float)f->img.width, (float)f->img.height};
-    Rectangle dest = (Rectangle){
-        f->rect.x + f->rect.width / 2.0f,
-        f->rect.y + f->rect.height / 2.0f,
-        f->rect.width,
-        f->rect.height
-    };
-    Vector2 origin = (Vector2){f->rect.width / 2.0f, f->rect.height / 2.0f};
+    // Textura e' opcional: sem ela, desenha so' o contorno do campo
+    // if(f->img.id == 0){
+    //     DrawRectangleLinesEx(f->rect, 2.0f, f->cor);
+    //     return;
+    // }
 
-    DrawTexturePro(f->img, source, dest, origin, f->rotation, f->cor);
+    // Rectangle source = (Rectangle){0, 0, (float)f->img.width, (float)f->img.height};
+    // Rectangle dest = (Rectangle){
+    //     f->rect.x + f->rect.width / 2.0f,
+    //     f->rect.y + f->rect.height / 2.0f,
+    //     f->rect.width,
+    //     f->rect.height
+    // };
+    // Vector2 origin = (Vector2){f->rect.width / 2.0f, f->rect.height / 2.0f};
+
+    // DrawTexturePro(f->img, source, dest, origin, f->rotation, f->cor);
 }
 
 void Field_DrawFromMatrixObject(Field field){
