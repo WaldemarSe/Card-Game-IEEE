@@ -14,6 +14,12 @@ typedef enum {
     MAXIMIZED = 2
 } CurrentScale;
 
+typedef enum {
+    FREE = 0,
+    ANIMATING = 1,
+    LOCKED = 2
+} CurrentState;
+
 /**
  * @brief Inicializa uma estrutura de Card (carta).
  * @param rect Retangulo de dimensoes para a carta.
@@ -30,7 +36,9 @@ Card Card_GetById(int id);
 
 bool Card_isHovered(Card card, Vector2 point);
 
-bool Card_isGrabbed(Card card, bool isDown);
+bool Card_isGrabbed(Card card, Vector2 point, bool isDown);
+
+bool Card_isOnAnimation(Card card);
 
 void Card_SetRotation(Card card, float rotation);
 
@@ -44,11 +52,15 @@ void Card_SetScaleRatio(Card card, float scaleRatio);
 
 void Card_SetScale(Card card, float scale, float duration);
 
+void Card_SetRect(Card card, Rectangle rect);
+
 void Card_Minimize(Card card, float duration);
 
 void Card_Medianize(Card card, float duration);
 
 void Card_Maximize(Card card, float duration);
+
+void Card_PlayAttackAnimation(Card card, Vector2 attackPoint);
 
 void Card_Update(Card card, float deltaTime);
 

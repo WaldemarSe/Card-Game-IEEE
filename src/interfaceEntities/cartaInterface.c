@@ -9,6 +9,10 @@
 #include <animation.h>
 #include <lista.h>
 
+#include <utils.h>
+
+#include <raymath.h>
+
 Hash cardsAllInstances = NULL;
 
 typedef struct CardStr {
@@ -31,6 +35,8 @@ typedef struct CardStr {
     CurrentScale scaleType;
     float time;
 
+    CurrentState state;
+
     Color cor;
 } CardStr;
 
@@ -45,10 +51,12 @@ Card Card_Init(Rectangle rect, Texture2D txr){
     card->anim = Animation_Init();
     Animation_AddPositionAnimation(card->anim, easeOutBack);
     Animation_AddScaleAnimation(card->anim, rect, easeOutBack);
+    
+    Animation_SetPosition(card->anim, (Vector2){rect.x, rect.y});
 
     card->rect = rect;
     card->lastPosition = (Vector2){rect.x, rect.y};
-    card->scaleRatio = 1.0f;
+    card->scaleRatio = 0.8f;
 
     card->hovered = false;
     card->grabbed = false;
@@ -58,10 +66,12 @@ Card Card_Init(Rectangle rect, Texture2D txr){
 
     card->cor = WHITE;
 
-    card->scaleType = MAXIMIZED;
+    card->scaleType = MEDIANIZED;
     card->time = 0.0f;
 
-    createAndInsertInstance(&cardsAllInstances, id, card);
+    card->state = FREE;
+
+    createAndInsertInstance(&cardsAllInstances, card->id, card);
 
     id += 1;
     
@@ -88,16 +98,30 @@ bool Card_isHovered(Card card, Vector2 point){
     return c->hovered;
 }
 
-bool Card_isGrabbed(Card card, bool isDown){
+bool Card_isGrabbed(Card card, Vector2 point, bool isDown){
     CardStr* c = (CardStr*)card;
+
+    static bool firstCall = true;
 
     if(c->grabbed){
         c->grabbed = isDown;
         c->attached = c->grabbed;
+        firstCall = true;
     }
-    else c->grabbed = c->hovered && isDown;
+    else if(firstCall){
+        c->grabbed = Card_isHovered(card, point) && isDown;
+        firstCall = false;
+    }
+
+    if(!isDown) firstCall = true;
 
     return c->attached;
+}
+
+bool Card_isOnAnimation(Card card){
+    CardStr* c = (CardStr*)card;
+
+    return c->state == ANIMATING;
 }
 
 void Card_SetRotation(Card card, float rotation){
@@ -109,6 +133,8 @@ void Card_Move(Card card, Vector2 delta){
 
     c->rect.x += delta.x;
     c->rect.y += delta.y;
+
+    Animation_SetPosition(c->anim, (Vector2){c->rect.x, c->rect.y});
 }
 
 void Card_MoveTo(Card card, Vector2 finalPoint, float duration){
@@ -121,6 +147,7 @@ void Card_MoveTo(Card card, Vector2 finalPoint, float duration){
     Vector2 cPos = (Vector2){c->rect.x, c->rect.y};
 
     Animation_SetPosition(c->anim, cPos);
+    Animation_SetPositionFunction(c->anim, easeInOutBack);
     Animation_MoveTo(c->anim, fPoint, duration);
 }
 
@@ -144,6 +171,18 @@ void Card_SetScale(Card card, float scale, float duration){
     Animation_Resize(c->anim, scale, duration);
 }
 
+void Card_SetRect(Card card, Rectangle rect){
+    CardStr* c = (CardStr*)card;
+
+    c->rect = rect;
+
+    if(Animation_PositionIsAnimating(c->anim)){
+        Vector2 fPoint = (Vector2){rect.x, rect.y};
+        Animation_SetPosition(c->anim, fPoint);
+        Animation_MoveTo(c->anim, fPoint, 0.0f);
+    }
+}
+
 void Card_Minimize(Card card, float duration){
     CardStr* c = (CardStr*)card;
     
@@ -159,7 +198,7 @@ void Card_Medianize(Card card, float duration){
 
     if(c->scaleType == MEDIANIZED) return;
 
-    Card_SetScale(card, ((1.0f - c->scaleRatio) * 0.5f) + c->scaleRatio, duration);
+    Card_SetScale(card, 1.0f, duration);
     
     c->scaleType = MEDIANIZED;
 }
@@ -169,9 +208,20 @@ void Card_Maximize(Card card, float duration){
 
     if(c->scaleType == MAXIMIZED) return;
 
-    Card_SetScale(card, 1.0f, duration);
+    Card_SetScale(card, 2.0f - c->scaleRatio, duration);
     
     c->scaleType = MAXIMIZED;
+}
+
+void Card_PlayAttackAnimation(Card card, Vector2 attackPoint){
+    CardStr* c = (CardStr*)card;
+
+    if(Animation_PositionIsAnimating(c->anim)){
+        Animation_EndPositionAnimation(c->anim);
+    }
+    Animation_SetPositionFunction(c->anim, spikeFunction);
+
+    Animation_MoveTo(c->anim, attackPoint, 1.0f);
 }
 
 static void Card_UpdatePos(Card card, float deltaTime){
@@ -179,11 +229,22 @@ static void Card_UpdatePos(Card card, float deltaTime){
 
     Animation_UpdatePosition(c->anim, deltaTime);
     
-    if(!Animation_PositionIsAnimating(c->anim)) return;
+    if(!Animation_PositionIsAnimating(c->anim)){
+        c->state = FREE;
+        return;
+    }
+    c->state = ANIMATING;
     
     Vector2 pos = Animation_GetPosition(c->anim);
     c->rect.x = pos.x;
     c->rect.y = pos.y;
+
+    float maxRotation = 25.5f;
+    float targetRotation = clamp((Vector2Subtract(pos, c->lastPosition).x * 1.2f), -maxRotation, maxRotation);
+
+    c->rotation = Lerp(c->rotation, targetRotation, 12.0f * deltaTime);
+
+    Card_UpdateLastPosition(card);
 }
 
 static void Card_UpdateSize(Card card, float deltaTime){
@@ -239,7 +300,10 @@ void Card_Draw(Card card){
     };
     Vector2 origin = (Vector2){c->rect.width / 2.0f, c->rect.height / 2.0f};
 
+    DrawRectangleRec(c->rect, WHITE);
+
     DrawTexturePro(c->img, source, dest, origin, c->rotation, WHITE);
+
 }
 
 Texture2D Card_free(Card card){

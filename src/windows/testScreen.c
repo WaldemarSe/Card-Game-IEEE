@@ -4,10 +4,6 @@
 
 #include <delimiters.h>
 
-#include "campo.h"
-#include "jogador.h"
-
-#include "campoInterface.h"
 #include "cartainterface.h"
 
 /** TELA DE TESTE
@@ -25,95 +21,62 @@
  * UNLOAD:  Liberação de variáveis alocadas.
 */
 
+static void Card_ResizeAnimation(Card c, Vector2 mousePos){
+    if(Card_isHovered(c, mousePos)){
+        if(Card_isGrabbed(c, mousePos, IsMouseButtonDown(MOUSE_BUTTON_LEFT))){
+            Card_Maximize(c, 0.5f);
+        }
+        else Card_Medianize(c, 0.5f);
+    }
+    else Card_Minimize(c, 0.5f);
+}
+
+static void Card_DragCheck(Card c, Vector2 mousePos, Vector2 mouseDelta){
+    if(Card_isGrabbed(c, mousePos, IsMouseButtonDown(MOUSE_BUTTON_LEFT))){
+        Card_Move(c, mouseDelta);
+    }
+}
+
 // Exemplo de variável estática global para ser acessada em múltiplas partes do arquivo.
-static Jogador jogador = NULL;
-static Jogador inimigo = NULL;
-
-static Campo campo = NULL;
-
-static Field field = NULL;
+Card c1 = NULL;
 
 static void Init(Game game){
     UNUSED(game);
 
-    jogador = criarJogador(10);
+    Vector2 wh = {200 * 3.0f/4.0f, 200};
+    Rectangle center = {CENTER.x - wh.x / 2.0f, CENTER.y - wh.y / 2.0f, wh.x, wh.y};
 
-    bool suc = carregarBaralho(jogador, true, "./assets/data/cartas.json");
-    if(!suc) printf("\n\nErro ao carregar baralho :(\n\n");
-
-    embaralharBaralho(jogador);
-
-    printBaralho(jogador);
-
-    inimigo = criarJogador(10);
-
-    suc = carregarBaralho(inimigo, false, "./assets/data/cartas.json");
-    if(!suc) printf("\n\nErro ao carregar baralho :(\n\n");
-
-    embaralharBaralho(inimigo);
-
-    printBaralho(inimigo);
-
-    ///////////////////////////////////////////////////////
-
-    campo = criarCampo();
-
-    suc = comprarCarta(jogador);
-    if(!suc) printf("\n\nErro ao comprar carta do jogador :(\n\n");
-    suc = comprarCarta(inimigo);
-    if(!suc) printf("\n\nErro ao comprar carta do inimigo :(\n\n");
-
-    Lista jMao = getMaoJogador(jogador);
-    Lista iMao = getMaoJogador(inimigo);
-
-    Carta carta = removerInicio(jMao);
-    adicionarCarta(campo, carta, 2);
-    carta = removerInicio(iMao);
-    adicionarCarta(campo, carta, 2);
-
-    printCampo(campo);
-
-    ///////////////////////////////////////////////////////
-
-    moverCartas(campo);
-    printCampo(campo);
-
-    atacarCartas(campo, true, jogador);
-    atacarCartas(campo, true, jogador);
-
-    atacarCartas(campo, true, jogador);
-
-    printCampo(campo);
-
-    ///////////////////////////////////////////////////////
-
-    Texture2D txr = LoadTexture("./assets/sprites/menuBackground_p.png");
-
-    Rectangle fieldRec = {CENTER.x - SCREEN_WIDTH / 4.0f, CENTER.y - SCREEN_HEIGHT / 4.0f, SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-    field = Field_Init(fieldRec, txr, 10);
-
-    Field_AssignMatrixObject(field, campo, getCartaFromPos, 3, 4);
-    // Field_AssignSlotSprite(field, );
+    Texture2D txr = LoadTexture("./assets/sprites/cards/c1.png");
+    c1 = Card_Init(center, txr);
 }
 
 static void Update(Game game, float deltaTime){
     UNUSED(game);
     UNUSED(deltaTime);
+
+    Vector2 mousePos = GetMousePosition();
+    Vector2 mouseDelta = GetMouseDelta();
+
+    if(IsKeyPressed(KEY_W)) Card_PlayAttackAnimation(c1, (Vector2){CENTER.x - 100/2.0f, 0});
+    
+    Card_ResizeAnimation(c1, mousePos);
+    if(!Card_isOnAnimation(c1)) Card_DragCheck(c1, mousePos, mouseDelta);
+
+    Card_Update(c1, deltaTime);
 }
 
 static void Draw(Game game, float deltaTime){
     UNUSED(game);
     UNUSED(deltaTime);
 
-    Field_Draw(field);
+    Card_Draw(c1);
 }
 
 static void Unload(Game game){
     UNUSED(game);
 
-    Lista cartasCampo = liberarCampo(campo);
-    destroiLista(cartasCampo, runExtra, killCarta);
-    liberarJogador(jogador);
+    Texture2D txr = Card_free(c1);
+    UnloadTexture(txr);
 }
 
 Screen TestScreen = { Init, Update, Draw, Unload };

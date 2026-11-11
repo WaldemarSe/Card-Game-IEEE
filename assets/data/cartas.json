@@ -4,20 +4,20 @@
     "name": "Coruja-Libra",
     "attack": 2,
     "health": 1,
-    "sprite": "sprites/cards/c1.png"
+    "sprite": "assets/sprites/cards/c1.png"
   },
   {
     "id": 1,
     "name": "Virgem-Cobra",
     "attack": 4,
     "health": 1,
-    "sprite": "sprites/cards/c2.png"
+    "sprite": "assets/sprites/cards/c2.png"
   },
   {
     "id": 2,
     "name": "Peixes",
     "attack": 2,
     "health": 4,
-    "sprite": "sprites/cards/c3.png"
+    "sprite": "assets/sprites/cards/c3.png"
   }
 ]

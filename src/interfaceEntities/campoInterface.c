@@ -8,6 +8,13 @@
 #include "carta.h"
 #include "cartainterface.h"
 
+typedef struct Slot{
+    Rectangle rec;
+    Color color;
+
+    Item item;
+} Slot;
+
 typedef struct FieldStr {
     int id;
 
@@ -35,6 +42,8 @@ typedef struct FieldStr {
     getItemFuncMatrix matrixFunc;
     int matrixSizeX;
     int matrixSizeY;
+
+    Slot** positionMatrix;
 } FieldStr;
 
 Field Field_Init(Rectangle rect, Texture2D txr, int maxItems){
@@ -70,6 +79,13 @@ Field Field_Init(Rectangle rect, Texture2D txr, int maxItems){
 
     f->content = criaLista();
     f->maxItems = maxItems;
+
+    f->matrix = NULL;
+    f->matrixFunc = NULL;
+    f->matrixSizeX = 0.0f;
+    f->matrixSizeY = 0.0f;
+
+    f->positionMatrix = NULL;
 
     id += 1;
 
@@ -198,6 +214,35 @@ void Field_AssignMatrixObject(Field field, Item object, getItemFuncMatrix objSea
     f->matrixFunc = objSearchFunc;
     f->matrixSizeX = sizeX;
     f->matrixSizeY = sizeY;
+
+    f->positionMatrix = (Slot**)malloc(sizeof(Slot*) * f->matrixSizeX);
+
+    Vector2 step = {f->rect.width / (f->matrixSizeY + 1), f->rect.height / (f->matrixSizeX + 1)};
+
+    for(int i = 0; i < f->matrixSizeX; i++){
+        f->positionMatrix[i] = (Slot*)malloc(sizeof(Slot) * f->matrixSizeY);
+        for(int j = 0; j < f->matrixSizeY; j++){
+            Vector2 widthHeight = {step.y * 3.0f / 4.8f, step.y / 1.2f};
+            Vector2 xyaxis = {f->rect.x + step.x + (j * step.x) - widthHeight.x / 2.0f, f->rect.y + step.y + (i * step.y) - widthHeight.y / 2.0f};
+
+            f->positionMatrix[i][j].rec = (Rectangle){xyaxis.x, xyaxis.y, widthHeight.x, widthHeight.y};
+            f->positionMatrix[i][j].color = ColorLerp(WHITE, (Color){0}, 0.4f);
+
+            Carta carta = objSearchFunc(object, i, j);
+            int id = -1;
+            
+            Card card = NULL;
+
+            if(carta != NULL){
+                id = getID(carta);
+                card = Card_GetById(id);
+
+                Card_SetRect(card, (Rectangle){xyaxis.x, xyaxis.y, widthHeight.x, widthHeight.y});
+            }
+
+            f->positionMatrix[i][j].item = card;
+        }
+    }
 }
 
 Vector2 Field_GetPosition(Field field){
@@ -213,33 +258,38 @@ float Field_GetRotation(Field field){
     return ((FieldStr*)field)->rotation;
 }
 
+static void DrawSlotsFromPositionMatrix(FieldStr* f){
+    for(int i = 0; i < f->matrixSizeX; i++){
+        for(int j = 0; j < f->matrixSizeY; j++){
+            Slot s = f->positionMatrix[i][j];
+            DrawRectangleRec(s.rec, s.color);
+
+            if(s.item != NULL) Card_Draw(s.item);
+        }
+    }
+}
+
 void Field_Draw(Field field){
     FieldStr* f = (FieldStr*)field;
 
-    Vector2 step = {f->rect.width / f->matrixSizeX, f->rect.height / f->matrixSizeY};
-
-    for(int i = 0; i < f->matrixSizeX; i++){
-        for(int j = 0; j < f->matrixSizeY; j++){
-            DrawRectangle(f->rect.x + (j * step.x), f->rect.y + (i * step.y), step.x * 0.8f, step.y * 0.8f, WHITE);
-        }
+    // Textura e' opcional: sem ela, desenha so' o contorno do campo
+    if(f->img.id == 0){
+        DrawRectangleLinesEx(f->rect, 2.0f, f->cor);
+        return;
     }
 
-    // Textura e' opcional: sem ela, desenha so' o contorno do campo
-    // if(f->img.id == 0){
-    //     DrawRectangleLinesEx(f->rect, 2.0f, f->cor);
-    //     return;
-    // }
+    Rectangle source = (Rectangle){0, 0, (float)f->img.width, (float)f->img.height};
+    Rectangle dest = (Rectangle){
+        f->rect.x + f->rect.width / 2.0f,
+        f->rect.y + f->rect.height / 2.0f,
+        f->rect.width,
+        f->rect.height
+    };
+    Vector2 origin = (Vector2){f->rect.width / 2.0f, f->rect.height / 2.0f};
 
-    // Rectangle source = (Rectangle){0, 0, (float)f->img.width, (float)f->img.height};
-    // Rectangle dest = (Rectangle){
-    //     f->rect.x + f->rect.width / 2.0f,
-    //     f->rect.y + f->rect.height / 2.0f,
-    //     f->rect.width,
-    //     f->rect.height
-    // };
-    // Vector2 origin = (Vector2){f->rect.width / 2.0f, f->rect.height / 2.0f};
+    DrawTexturePro(f->img, source, dest, origin, f->rotation, f->cor);
 
-    // DrawTexturePro(f->img, source, dest, origin, f->rotation, f->cor);
+    DrawSlotsFromPositionMatrix(f);
 }
 
 void Field_DrawFromMatrixObject(Field field){
@@ -278,12 +328,21 @@ void Field_DrawFromMatrixObject(Field field){
     }
 }
 
+static void FreePositionMatrix(FieldStr* f){
+    for(int i = 0; i < f->matrixSizeX; i++){
+        free(f->positionMatrix[i]);
+    }
+    free(f->positionMatrix);
+}
+
 Lista Field_free(Field field){
     FieldStr* f = (FieldStr*)field;
 
     Lista content = f->content;
     f->content = NULL;
     
+    FreePositionMatrix(f);
+
     Animation_Free(f->anim);
     free(f);
 

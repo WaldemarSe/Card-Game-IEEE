@@ -6,6 +6,7 @@
 
 #include <lista.h>
 #include <types.h>
+#include <utils.h>
 
 typedef void* Field;
 

@@ -7,6 +7,8 @@
 #include "jogador.h"
 #include "carta.h"
 
+#include "cartainterface.h"
+
 #define MAX_CARTAS 3
 
 typedef struct JogadorStr{
@@ -154,6 +156,9 @@ bool carregarBaralho(Jogador jogador, bool playerFlag, const char* caminhoArquiv
         Carta carta = criarCarta(nome, atk, vida, sprite_carta, playerFlag);
 
         inserirInicio(j->baralho, carta);
+
+        Texture2D txr = LoadTexture(sprite_carta);
+        Card_Init((Rectangle){0, 0, 100, 100}, txr);
 
         contador++;
     }
